@@ -78,29 +78,31 @@
   }
 </style>
 
-<!-- Actualización del fondo principal a gris oscuro en lugar de negro -->
-<section class="bg-zinc-900 text-white min-h-screen pt-20">
+<!-- Agregué un padding-top para asegurarnos que no esté detrás del navbar -->
+<section class="bg-black text-white min-h-screen pt-20">
   {#each projects as project, i}
     {#if i === 0}
+      <!-- Solo mostrar el título principal para el primer proyecto -->
       <div class="text-center mb-20">
         <h1 class="text-6xl font-light mb-6 max-w-4xl mx-auto leading-tight">
           {project.title}
         </h1>
-        <!-- Línea decorativa actualizada con gradiente gris claro -->
-        <div class="h-[2px] max-w-[200px] mx-auto lava-line bg-gradient-to-r from-zinc-900 via-white to-zinc-900"></div>
+        <!-- Línea con efecto lava lamp mejorado -->
+        <div class="h-[2px] max-w-[200px] mx-auto lava-line bg-gradient-to-r from-black via-[#F98030] to-black"></div>
       </div>
     {/if}
 
-    <!-- Separador actualizado a gris claro -->
+    <!-- Separador animado (excepto para el primer proyecto) -->
     {#if i > 0}
-      <div class="project-divider h-[1px] w-full bg-zinc-300/20 my-20 origin-left"></div>
+      <div class="project-divider h-[1px] w-full bg-white my-20 origin-left"></div>
     {/if}
 
     <!-- Proyecto -->
     <div class="project-section p-8 flex flex-col justify-center">
+      <!-- Contenedor de proyecto -->
       <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-        <!-- Imagen con borde actualizado -->
-        <div class="aspect-[4/3] overflow-hidden border border-zinc-300/10">
+        <!-- Imagen -->
+        <div class="aspect-[4/3] overflow-hidden border border-white/10">
           <img
             src={project.imageUrl}
             alt="Architectural space"
@@ -112,17 +114,14 @@
         <div class="space-y-6">
           <div class="flex items-center gap-4">
             <h2 class="text-2xl font-light text-[#F98030]">{project.projectTitle}</h2>
-            <!-- Año actualizado a gris claro -->
-            <span class="text-zinc-300">{project.year}</span>
+            <span class="text-[#F98030]/70">{project.year}</span>
           </div>
           
-          <!-- Texto descriptivo actualizado a gris más claro -->
-          <p class="text-zinc-200 leading-relaxed">
+          <p class="text-gray-300 leading-relaxed">
             {project.description}
           </p>
 
-          <!-- Botón actualizado con hover en gris claro -->
-          <button class="border border-zinc-300 px-6 py-2 rounded-full hover:bg-zinc-100 hover:text-zinc-900 hover:border-transparent transition-all duration-300">
+          <button class="border border-white px-6 py-2 rounded-full hover:bg-[#F98030] hover:border-transparent transition-all duration-300">
             read more
           </button>
         </div>
