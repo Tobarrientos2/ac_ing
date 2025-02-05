@@ -1,10 +1,5 @@
 <script>
-    import First from '$lib/component/First.svelte';
-    import Header from '$lib/component/Header.svelte';
-    import Carrusel from '$lib/component/Carrusel.svelte';
-    import Footer from '$lib/component/Footer.svelte';
+    import Home from '$lib/Home.svelte';
+    import Servicios from '$lib/Servicios.svelte';
 </script>
-<Carrusel></Carrusel>
-<Header />
-<First />
-<Footer></Footer>
+<Servicios></Servicios>
