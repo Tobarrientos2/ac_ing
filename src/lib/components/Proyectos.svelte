@@ -78,29 +78,29 @@
   }
 </style>
 
-<!-- Actualización del fondo principal a un gris más claro -->
-<section class="bg-gray-300 text-zinc-900 min-h-screen pt-20">
+<!-- Actualización del fondo principal a gris oscuro en lugar de negro -->
+<section class="bg-zinc-900 text-white min-h-screen pt-20">
   {#each projects as project, i}
     {#if i === 0}
       <div class="text-center mb-20">
         <h1 class="text-6xl font-light mb-6 max-w-4xl mx-auto leading-tight">
           {project.title}
         </h1>
-        <!-- Línea decorativa actualizada -->
-        <div class="h-[2px] max-w-[200px] mx-auto lava-line bg-gradient-to-r from-gray-300 via-[#F98030] to-gray-300"></div>
+        <!-- Línea decorativa actualizada con gradiente gris claro -->
+        <div class="h-[2px] max-w-[200px] mx-auto lava-line bg-gradient-to-r from-zinc-900 via-white to-zinc-900"></div>
       </div>
     {/if}
 
-    <!-- Separador actualizado -->
+    <!-- Separador actualizado a gris claro -->
     {#if i > 0}
-      <div class="project-divider h-[1px] w-full bg-zinc-600/20 my-20 origin-left"></div>
+      <div class="project-divider h-[1px] w-full bg-zinc-300/20 my-20 origin-left"></div>
     {/if}
 
     <!-- Proyecto -->
     <div class="project-section p-8 flex flex-col justify-center">
       <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         <!-- Imagen con borde actualizado -->
-        <div class="aspect-[4/3] overflow-hidden border border-zinc-400/20">
+        <div class="aspect-[4/3] overflow-hidden border border-zinc-300/10">
           <img
             src={project.imageUrl}
             alt="Architectural space"
@@ -112,14 +112,17 @@
         <div class="space-y-6">
           <div class="flex items-center gap-4">
             <h2 class="text-2xl font-light text-[#F98030]">{project.projectTitle}</h2>
-            <span class="text-zinc-700">{project.year}</span>
+            <!-- Año actualizado a gris claro -->
+            <span class="text-zinc-300">{project.year}</span>
           </div>
           
-          <p class="text-zinc-800 leading-relaxed">
+          <!-- Texto descriptivo actualizado a gris más claro -->
+          <p class="text-zinc-200 leading-relaxed">
             {project.description}
           </p>
 
-          <button class="border border-zinc-600 px-6 py-2 rounded-full hover:bg-[#F98030] hover:text-white hover:border-transparent transition-all duration-300">
+          <!-- Botón actualizado con hover en gris claro -->
+          <button class="border border-zinc-300 px-6 py-2 rounded-full hover:bg-zinc-100 hover:text-zinc-900 hover:border-transparent transition-all duration-300">
             read more
           </button>
         </div>

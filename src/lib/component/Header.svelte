@@ -25,7 +25,7 @@
   <nav class="px-6 py-6 flex justify-between items-center relative">
     <a href="/" class="absolute left-1/2 -translate-x-1/2 z-50">
       <div class="w-[60px] opacity-90 hover:opacity-100 transition-opacity duration-300"> 
-        <Logo inverted={false} />
+        <Logo inverted={true} />
       </div>
     </a>
     <div class="ml-auto">
@@ -36,16 +36,16 @@
       >
         <div class="w-8 h-8 relative">
           <span 
-            class="w-8 h-[2px] bg-zinc-900 transition-all duration-300 ease-in-out absolute top-1/2 left-0"
+            class="w-8 h-[2px] bg-white transition-all duration-300 ease-in-out absolute top-1/2 left-0"
             style={isMenuOpen ? 'transform: translateY(-50%) rotate(45deg)' : 'transform: translateY(-10px)'}
           ></span>
           <span 
-            class="w-8 h-[2px] bg-zinc-900 transition-all duration-300 ease-in-out absolute top-1/2 left-0"
+            class="w-8 h-[2px] bg-white transition-all duration-300 ease-in-out absolute top-1/2 left-0"
             class:opacity-0={isMenuOpen}
             style="transform: translateY(-50%)"
           ></span>
           <span 
-            class="w-8 h-[2px] bg-zinc-900 transition-all duration-300 ease-in-out absolute top-1/2 left-0"
+            class="w-8 h-[2px] bg-white transition-all duration-300 ease-in-out absolute top-1/2 left-0"
             style={isMenuOpen ? 'transform: translateY(-50%) rotate(-45deg)' : 'transform: translateY(8px)'}
           ></span>
         </div>
@@ -54,7 +54,7 @@
   </nav>
   {#if isMenuOpen}
     <div
-      class="fixed top-0 left-0 right-0 bottom-0 bg-gray-300 flex items-center justify-center"
+      class="fixed top-0 left-0 right-0 bottom-0 bg-black/95 flex items-center justify-center"
       style="height: 100vh; will-change: transform, opacity;"
       transition:fly={{ y: -20, duration: 500 }}
     >
@@ -63,9 +63,9 @@
           <li>
             <a
               href={item.href}
-              class="text-4xl text-zinc-900 hover:text-[#F98030] transition-colors duration-500
+              class="text-4xl text-white hover:text-[#FF4400] transition-colors duration-500
                      relative after:content-[''] after:absolute after:-bottom-2 after:left-0 
-                     after:w-0 after:h-[2px] after:bg-[#F98030] after:transition-all 
+                     after:w-0 after:h-[2px] after:bg-[#FF4400] after:transition-all 
                      after:duration-500 hover:after:w-full"
               on:click={toggleMenu}
             >
@@ -84,7 +84,7 @@
     transition: background-color 0.5s ease;
   }
   :global(header.scrolled) {
-    background: rgba(209, 209, 209, 0.95); /* gray-300 con opacidad */
+    background: rgba(0, 0, 0, 0.95);
     backdrop-filter: blur(5px);
   }
   img {
