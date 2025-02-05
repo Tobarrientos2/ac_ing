@@ -4,4 +4,3 @@
 </script>
 <Carrusel></Carrusel>
 <First />
-<Footer></Footer>

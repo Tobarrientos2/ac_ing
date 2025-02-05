@@ -1,5 +1,6 @@
 <script>
   import { onMount } from 'svelte';
+  import { activeTheme } from '../config/themes';
 
   const originalBrands = [
     {
@@ -29,6 +30,7 @@
 
   let scrollEl;
   let scrollAnimation;
+  let carruselSection;
 
   onMount(() => {
     // Creamos la animación infinita
@@ -48,6 +50,18 @@
     scrollAnimation.addEventListener('finish', () => {
       scrollAnimation.currentTime = 0;
     });
+
+    // Actualizar estilos según el tema
+    const updateCarruselStyles = () => {
+      if (carruselSection) {
+        carruselSection.style.setProperty('--carrusel-background', $activeTheme.colors.background);
+        carruselSection.style.setProperty('--text-color', $activeTheme.name === 'Light Theme' ? '#18181B' : '#FFFFFF');
+        carruselSection.style.setProperty('--logo-filter', $activeTheme.name === 'Light Theme' ? 'brightness(0)' : 'brightness(0) invert(1)');
+      }
+    };
+
+    const unsubscribe = activeTheme.subscribe(updateCarruselStyles);
+    return () => unsubscribe();
   });
 
   const handleMouseEnter = () => {
@@ -59,7 +73,10 @@
   };
 </script>
 
-<div class="w-full overflow-hidden bg-black py-8 carrusel-section h-[25vh] flex items-center">
+<div 
+  class="w-full overflow-hidden py-8 carrusel-section h-[25vh] flex items-center"
+  bind:this={carruselSection}
+>
   <div class="container mx-auto flex flex-col items-center justify-between h-full">
     <!-- Espacio reducido para el logo del header -->
     <div class="h-[40px]"></div>
@@ -67,7 +84,7 @@
     <!-- Título con espaciado ajustado -->
     <div class="flex items-center justify-center gap-4 mb-6">
       <div class="decorative-line w-12 h-[1px]"></div>
-      <h2 class="text-white text-center text-[10px] font-light tracking-[0.25em] uppercase opacity-70">
+      <h2 class="text-center text-[10px] font-light tracking-[0.25em] uppercase opacity-70">
         Confían en nosotros
       </h2>
       <div class="decorative-line w-12 h-[1px]"></div>
@@ -99,29 +116,20 @@
 </div>
 
 <style>
-  /* Eliminamos la animación CSS que reiniciaba el ciclo */
-  
-  /* La siguiente regla @keyframes ya no se utiliza y puede eliminarse */
-  /*
-  @keyframes scroll {
-    0% {
-      transform: translate3d(0, 0, 0);
-    }
-    100% {
-      transform: translate3d(-50%, 0, 0);
-    }
+  .carrusel-section {
+    background-color: var(--carrusel-background);
+    color: var(--text-color);
   }
-  */
 
   .partners-logo {
-    filter: brightness(0) invert(1);
+    filter: var(--logo-filter);
     opacity: 0.4;
     transition: all 0.5s ease;
   }
 
   .partners-logo:hover {
     opacity: 1;
-    filter: brightness(0) invert(1) drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+    filter: var(--logo-filter) drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
   }
 
   .partners-logo-wrapper {
@@ -148,8 +156,8 @@
   .partners-logo-wrapper::before {
     left: 0;
     background: linear-gradient(to right, 
-      rgb(0, 0, 0) 0%,
-      rgb(0, 0, 0) 50%,  /* Añadimos un paso intermedio sólido */
+      var(--carrusel-background) 0%,
+      var(--carrusel-background) 50%,
       transparent 100%
     );
   }
@@ -157,8 +165,8 @@
   .partners-logo-wrapper::after {
     right: 0;
     background: linear-gradient(to left, 
-      rgb(0, 0, 0) 0%,
-      rgb(0, 0, 0) 50%,  /* Añadimos un paso intermedio sólido */
+      var(--carrusel-background) 0%,
+      var(--carrusel-background) 50%,
       transparent 100%
     );
   }
@@ -172,11 +180,20 @@
 
   /* Líneas decorativas más elegantes */
   .decorative-line {
-    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transition: all 0.3s ease;
+    background: linear-gradient(
+      to right, 
+      transparent, 
+      color-mix(in srgb, var(--text-color) 30%, transparent),
+      transparent
+    );
   }
 
   .decorative-line:hover {
-    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.5), transparent);
+    background: linear-gradient(
+      to right, 
+      transparent, 
+      color-mix(in srgb, var(--text-color) 50%, transparent),
+      transparent
+    );
   }
 </style> 
