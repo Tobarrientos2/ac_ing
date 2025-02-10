@@ -121,4 +121,4 @@ export const setTheme = (themeId: string) => {
 };
 
 // Establecer el tema inicial aquí
-setTheme('theme03'); // Establece el tema por defecto 
+setTheme('theme01'); // Establece el tema por defecto 

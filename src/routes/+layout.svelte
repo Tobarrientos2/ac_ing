@@ -1,9 +1,21 @@
 <script>
 	import '../styles.css';
-	import Header from '$lib/component/Header.svelte';
-	import Footer from '$lib/component/Footer.svelte';
+	import Header from '$lib/components/Header.svelte';
+	import Footer from '$lib/components/Footer.svelte';
+	
 </script>
 
-<Header />
 <slot></slot>
-<Footer />
+<style>
+    /* Estilo global para el texto seleccionado */
+    :global(::selection) {
+        background-color: #FF4D00;
+        color: white;
+    }
+    
+    :global(::-moz-selection) {
+        background-color: #FF4D00;
+        color: white;
+    }
+</style>
+

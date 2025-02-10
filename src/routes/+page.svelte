@@ -1,6 +1,10 @@
 <script>
-    import Home from '$lib/Home.svelte';
-    import Servicios from '$lib/Servicios.svelte';
+    import { onMount } from 'svelte';
+    import SectionWrapper from '$lib/components/SectionWrapper.svelte';
+    import Disciplines from '$lib/components/Disciplines.svelte';
 </script>
-<Home></Home>
-<Servicios></Servicios>
+
+
+
+
+    <SectionWrapper></SectionWrapper>

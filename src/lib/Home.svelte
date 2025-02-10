@@ -1,6 +1,5 @@
 <script>
-    import First from '$lib/component/First.svelte';
-    import Carrusel from '$lib/component/Carrusel.svelte';
+    import First from '$lib/components/First.svelte';
+    import Carrusel from '$lib/components/Carrusel.svelte';
 </script>
-<Carrusel></Carrusel>
 <First />

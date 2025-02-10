@@ -5,17 +5,106 @@
 
   export let projects = [
     {
-      title: "Projects that inspire generations",
-      projectTitle: "The shapes",
-      year: "2023",
-      description: "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque ut neque. Sed augue ipsum, egestas nec, vestibulum et, malesuada adipiscing, dui. Vivamus euismod mauris.",
-      imageUrl: "https://ambientesdigital.com/wp-content/uploads/2023/06/R1A0137-.jpg"
+      title: "INGENIERÍA ESTRUCTURAL",
+      subsections: [
+        {
+          subtitle: "EDIFICIOS HABITACIONALES Y DE OFICINAS",
+          projects: [
+            { projectTitle: "EDIFICIO ALONSO", imageUrl: "placeholder" },
+            { projectTitle: "ESTORIL I", imageUrl: "placeholder" },
+            { projectTitle: "ESTORIL II", imageUrl: "placeholder" },
+          ]
+        },
+        {
+          subtitle: "EDIFICIOS INDUSTRIALES",
+          projects: [
+            { projectTitle: "KAUFFMANN", imageUrl: "placeholder" },
+            { projectTitle: "LAN", imageUrl: "placeholder" },
+            { projectTitle: "SALMOFOOD", imageUrl: "placeholder" },
+            { projectTitle: "SANDVIK", imageUrl: "placeholder" },
+            { projectTitle: "CINE HOYTS LA REINA", imageUrl: "placeholder" },
+            { projectTitle: "VIÑA SANTA RITA", imageUrl: "placeholder" }
+          ]
+        },
+        {
+          subtitle: "EDIFICIOS ESPECIALES",
+          projects: []
+        }
+      ]
     },
     {
-      projectTitle: "The curves",
-      year: "2024",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.",
-      imageUrl: "https://ambientesdigital.com/wp-content/uploads/2023/06/R1A0137-.jpg"
+      title: "REVISION DE PROYECTOS DE INGENIERÍA ESTRUCTURAL",
+      subsections: [
+        {
+          subtitle: "PRIMERA CATEGORÍA OTORGADO POR EL MINISTERIO DE URBANISMO Y VIVIENDA DE ACUERDO A LA LEY 19.748:",
+          projects: [
+            { projectTitle: "ALBERTO MACCIONI QUEZADA", imageUrl: "placeholder" }
+          ]
+        }
+      ]
+    },
+    {
+      title: "DESARROLLO DE SISTEMAS INNOVATIVOS",
+      subsections: [
+        {
+          subtitle: "INVENSIÓN DEL SISTEMA DE PROTECCIÓN DE TALUDES DE SUBTERRÁNEOS MEDIANTE TENSORES A TERRENO. SE UTILIZA POR PRIMERA VEZ EN EL PROYECTO DE AMPLIACIÓN DEL HOTEL SHERATON SAN CRISTÓBAL EN 1995.",
+          projects: [
+            { projectTitle: "SHERATON TALUDES", imageUrl: "placeholder" }
+          ]
+        },
+        {
+          subtitle: "DESARROLLO DEL SISTEMA COPROCELL, DE VIGAS LAMINADAS EXPANDIDAS DE ACERO.",
+          projects: [
+            { projectTitle: "NAVE BODENOR", imageUrl: "placeholder" }
+          ]
+        },
+        {
+          subtitle: "DESARROLLO DEL SISTEMA DE VIGAS STEEL JOIST DE AZA, JOISTEC",
+          projects: [
+            { projectTitle: "BODENOR", imageUrl: "placeholder" }
+          ]
+        },
+        {
+          subtitle: "DESARROLLO DEL SISTEMA DE MEGA COSTANERAS CONTINUAS, COPROMET",
+          projects: [
+            { projectTitle: "BODENOR", imageUrl: "placeholder" }
+          ]
+        }
+      ]
+    },
+    {
+      title: "ASESORÍAS",
+      subsections: [
+        {
+          subtitle: "DESARROLLO MANUAL ICHA, DE DISEÑO DE ESTRUCTURAS DE ACERO, 2006",
+          projects: [
+            { projectTitle: "MANUAL", imageUrl: "placeholder" }
+          ]
+        },
+        {
+          subtitle: "DESARROLLO MANUAL SISTEMA ZETA-TUBEST DE CINTAC",
+          projects: [
+            { projectTitle: "placeholder", imageUrl: "placeholder" }
+          ]
+        },
+        {
+          subtitle: "REVISIÓN MANUAL DE DISEÑO ESTRUCTURAL DE PRODUCTOS CINTAC",
+          projects: [
+            { projectTitle: "placeholder", imageUrl: "placeholder" }
+          ]
+        }
+      ]
+    },
+    {
+      title: "EVENTOS",
+      subsections: [
+        {
+          subtitle: "Se realizan dos eventos producidos por BMing, hoy AC Ingeniería Estructural en Chile, 2006 y 2018 con la visita de Leslie E. Robertson, ingeniero estructural pionero quien tiene a su haber el diseño de 4 de los 10 edificios más altos del mundo, entre los que destacan, Las Torres Gemelas de Nueva York (World Trade Center), el Shanghai World Financial Center y la Bank of China Tower en Hong Kong, y las torres Puerta de Europa en Madrid.",
+          projects: [
+            { projectTitle: "FOTOS del evento", imageUrl: "placeholder" }
+          ]
+        }
+      ]
     }
   ];
 
@@ -46,48 +135,47 @@
   <Pattern />
 
   <div class="content-wrapper">
-    {#each projects as project, i}
-      {#if i === 0}
-        <div class="text-center mb-20">
-          <h1 class="text-6xl font-light mb-6 max-w-4xl mx-auto leading-tight {$activeTheme.colors.text.primary}">
-            {project.title}
-          </h1>
-          <div class="h-[2px] max-w-[200px] mx-auto" 
-               style="background: linear-gradient(to right, {$activeTheme.colors.background}, {$activeTheme.colors.primary}, {$activeTheme.colors.background})">
-          </div>
+    {#each projects as service, i}
+      <div class="text-center mb-20">
+        <h1 class="text-6xl font-light mb-6 max-w-4xl mx-auto leading-tight {$activeTheme.colors.text.primary}">
+          {service.title}
+        </h1>
+        <div class="h-[2px] max-w-[200px] mx-auto"
+              style="background: linear-gradient(to right, {$activeTheme.colors.background}, {$activeTheme.colors.primary}, {$activeTheme.colors.background})">
         </div>
-      {/if}
+      </div>
 
       {#if i > 0}
         <div data-type="divider" class="h-[1px] w-full my-20 origin-left scale-x-0 transition-transform duration-1000 ease-in-out {$activeTheme.colors.border.secondary}"></div>
       {/if}
 
-      <div data-type="section" class="p-8 flex flex-col justify-center opacity-0 translate-y-5 transition-opacity transition-transform duration-800 ease-out">
-        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div class="aspect-[4/3] overflow-hidden {$activeTheme.colors.border.secondary}">
-            <img
-              src={project.imageUrl}
-              alt="Architectural space"
-              class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-300"
-            />
-          </div>
+      {#each service.subsections as subsection, j}
+        {#each subsection.projects as project, k}
+          <div data-type="section" class="p-8 flex flex-col justify-center opacity-0 translate-y-5 transition-opacity transition-transform duration-800 ease-out">
+            <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+              <div class="aspect-[4/3] overflow-hidden {$activeTheme.colors.border.secondary}">
+                <img
+                  src={project.imageUrl}
+                  alt="Architectural space"
+                  class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-300"
+                />
+              </div>
 
-          <div class="space-y-6">
-            <div class="flex items-center gap-4">
-              <h2 class="text-2xl font-light {$activeTheme.colors.text.accent}">{project.projectTitle}</h2>
-              <span class="{$activeTheme.colors.text.secondary}">{project.year}</span>
+              <div class="space-y-6">
+                <div class="flex items-center gap-4">
+                  <h2 class="text-2xl font-light {$activeTheme.colors.text.accent}">{project.projectTitle}</h2>
+                  {#if subsection.subtitle}
+                    <span class="{$activeTheme.colors.text.secondary}">{subsection.subtitle}</span>
+                  {/if}
+                </div>
+              </div>
             </div>
-            
-            <p class="{$activeTheme.colors.text.secondary} leading-relaxed">
-              {project.description}
-            </p>
-
-            <button class="border {$activeTheme.colors.border.primary} px-6 py-2 rounded-full hover:bg-[{$activeTheme.colors.primary}] hover:text-white hover:border-transparent transition-all duration-300">
-              read more
-            </button>
           </div>
-        </div>
-      </div>
+          {#if k < subsection.projects.length - 1}
+            <div data-type="divider" class="h-[1px] w-full my-20 origin-left scale-x-0 transition-transform duration-1000 ease-in-out {$activeTheme.colors.border.secondary}"></div>
+          {/if}
+        {/each}
+      {/each}
     {/each}
   </div>
 </section>
