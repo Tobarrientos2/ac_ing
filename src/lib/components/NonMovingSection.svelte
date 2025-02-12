@@ -2,7 +2,6 @@
   import { onMount } from 'svelte';
   import { tweened } from 'svelte/motion';
   import { cubicOut } from 'svelte/easing';
-  import First from './First.svelte';
 
   // Tweened store for overlay opacity
   const overlayOpacity = tweened(0, { duration: 400, easing: cubicOut });
@@ -31,7 +30,7 @@
 
 <section class="fixed inset-0 w-full h-screen bg-purple-600 flex items-center justify-center text-white relative" style="z-index: -1;">
   <div class="w-full" style="position: relative; z-index: -2;">
-    <First />
+    <slot />
   </div>
   <div class="absolute inset-0 pointer-events-none bg-black" style="opacity: {$overlayOpacity}"></div>
 </section>

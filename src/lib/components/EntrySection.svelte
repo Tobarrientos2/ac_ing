@@ -1,13 +1,16 @@
 <script>
-  import Carrusel from './Carrusel.svelte';
+  export let contentComponent = undefined;
 </script>
 
 <section 
-  class="absolute bottom-0 left-0 w-full h-screen flex items-center justify-center"
+  class="absolute bottom-0 left-0 w-full h-screen flex items-center justify-center bg-white"
   data-scroll
   data-scroll-section
 >
-  <Carrusel />
+  {#if contentComponent}
+    <svelte:component this={contentComponent} />
+  
+  {/if}
 </section>
 
 <style>

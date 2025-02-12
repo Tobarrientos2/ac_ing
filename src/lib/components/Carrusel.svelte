@@ -41,18 +41,21 @@
      // Add any "Edificios Especiales" here, following the same structure.
   ];
 
-  let visibleCards = 3;
+  let visibleCards = 2.25;
   let currentIndex = 0;
+  let maxIndex = buildings.length - Math.floor(visibleCards);
 
-    function next() {
-        currentIndex = (currentIndex + 1) % buildings.length;
+  function next() {
+    if (currentIndex < maxIndex) {
+      currentIndex++;
     }
+  }
 
-    function prev() {
-        currentIndex = (currentIndex - 1 + buildings.length) % buildings.length;
+  function prev() {
+    if (currentIndex > 0) {
+      currentIndex--;
     }
-
-    $: visibleBuildings = [...buildings.slice(currentIndex), ...buildings.slice(0, currentIndex)];
+  }
 
   import { onMount } from 'svelte';
 
@@ -82,7 +85,7 @@
     });
 
     document.addEventListener('mousemove', (e) => {
-      if (e.target.closest('.group')) {
+      if (e.target instanceof HTMLElement && e.target.closest('.group')) {
         cursor.style.left = `${e.clientX}px`;
         cursor.style.top = `${e.clientY}px`;
       }
@@ -131,8 +134,8 @@
         class="flex gap-8 transition-transform duration-500 ease-in-out"
         style="transform: translateX(-{currentIndex * (100 / visibleCards)}%);"
       >
-        {#each visibleBuildings as item}
-          <div class="flex-shrink-0 w-[calc(33.33%-1.5rem)] relative group">
+        {#each buildings as item}
+          <div class="flex-shrink-0 w-[calc(44.44%-1.5rem)] relative group">
             <div class="absolute top-4 left-4 bg-white px-3 py-1 rounded-sm text-xs z-10">
               {item.tag}
             </div>
