@@ -23,7 +23,13 @@
   - Con darkness=0, la fórmula genera rgb(128,0,128) (morado).
   - Con darkness=1, la fórmula genera rgb(0,0,0) (negro).
 -->
-<div class="fixed top-0 left-0 h-screen w-full text-white flex justify-center items-center z-10 transition-colors duration-300 ease-in-out"
-  style="background-color: rgb({Math.round(128 * (1 - darkness))}, 0, {Math.round(128 * (1 - darkness))});">
-  <slot />
+<div class="fixed top-0 left-0 h-screen w-full text-white flex justify-center items-center">
+  <div class="absolute inset-0 bg-purple-900" />
+  <div class="relative w-full h-full z-20">
+    <slot />
+  </div>
+  <div 
+    class="absolute inset-0 bg-black pointer-events-none transition-opacity duration-300 ease-in-out z-30"
+    style="opacity: {darkness};"
+  />
 </div>
