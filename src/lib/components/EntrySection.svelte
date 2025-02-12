@@ -1,7 +1,24 @@
 <script>
-  // No se requiere lógica de scroll, la sección blanca se mantiene sólida.
+  import Carrusel from './Carrusel.svelte';
 </script>
 
-<div class="relative z-20 mt-[100vh] min-h-screen w-full bg-white text-black flex justify-center items-center">
-  <slot />
-</div>
+<section 
+  class="absolute bottom-0 left-0 w-full h-screen flex items-center justify-center"
+  data-scroll
+  data-scroll-section
+>
+  <Carrusel />
+</section>
+
+<style>
+  section {
+    transform: translateY(100%);
+    background-color: transparent;
+    z-index: 10;
+  }
+
+  section:global(.is-inview) {
+    transform: translateY(0);
+    transition: transform 1s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+</style>

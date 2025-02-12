@@ -2,10 +2,12 @@
 	import '../styles.css';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
+    import LocomotiveScroll from '$lib/LocomotiveScroll.svelte';
 	
 </script>
-
-<slot></slot>
+<LocomotiveScroll>
+    <slot></slot>
+</LocomotiveScroll>
 <style>
     /* Estilo global para el texto seleccionado */
     :global(::selection) {
@@ -18,4 +20,3 @@
         color: white;
     }
 </style>
-

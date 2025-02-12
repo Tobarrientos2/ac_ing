@@ -1,17 +1,10 @@
 <script>
-    import NonMovingSection from '$lib/components/NonMovingSection.svelte';
-    import EntrySection from '$lib/components/EntrySection.svelte';
-    import First from '$lib/components/First.svelte';
-    import Card from '$lib/components/Card.svelte';
-    import Disciplines from './Disciplines.svelte';
-    import Carrusel from './Carrusel.svelte';
+  import NonMovingSection from './NonMovingSection.svelte';
 </script>
 
-<div class="relative w-full">
-    <NonMovingSection>
-        <First />
-    </NonMovingSection>
-  <EntrySection>
-    <Carrusel></Carrusel>
-  </EntrySection>
+<div class="relative" data-scroll-container>
+  <NonMovingSection />
+  <div class="relative min-h-[200vh]">
+    <slot />
+  </div>
 </div>
