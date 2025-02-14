@@ -16,7 +16,7 @@
 <style>
   section {
     transform: translateY(100%);
-    background-color: transparent;
+    background-color: white;
     z-index: 10;
   }
 

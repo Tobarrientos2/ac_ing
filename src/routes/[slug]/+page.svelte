@@ -1,13 +1,17 @@
 <script>
+    import { page } from '$app/stores';
+    import { routes } from '$lib/config/routes';
     import SectionWrapper from "$lib/components/SectionWrapper.svelte";
-    import Disciplines from "$lib/components/Disciplines.svelte";
     import EntrySection from '$lib/components/EntrySection.svelte';
-    import Carrusel from '$lib/components/Carrusel.svelte';
     import First from '$lib/components/First.svelte';
-    import NewsFullSection from "$lib/components/NewsFullSection.svelte";
+
+    $: currentRoute = routes[$page.params.slug];
 </script>
 
 <SectionWrapper nonMovingComponent={First}>
-    <EntrySection contentComponent={NewsFullSection} />
-    <NewsSection />
+    {#if currentRoute}
+        <EntrySection contentComponent={currentRoute.component} />
+    {:else}
+        <EntrySection contentComponent={null} />
+    {/if}
 </SectionWrapper>

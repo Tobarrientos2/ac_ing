@@ -7,8 +7,13 @@
     import First from '$lib/components/First.svelte';
     import Carrusel from '$lib/components/Carrusel.svelte';
     import NewsFullSection from '$lib/components/NewsFullSection.svelte';
+    import Mapa from '$lib/components/Mapa.svelte';
 </script>
 
 <SectionWrapper nonMovingComponent={First}>
-    <EntrySection contentComponent={NewsFullSection} />
+    <EntrySection contentComponent={Mapa} />
 </SectionWrapper>
+
+
+
+

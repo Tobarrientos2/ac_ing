@@ -5,6 +5,7 @@
     import LocomotiveScroll from '$lib/LocomotiveScroll.svelte';
 	
 </script>
+
 <LocomotiveScroll>
     <slot></slot>
 </LocomotiveScroll>

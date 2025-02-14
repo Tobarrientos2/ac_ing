@@ -36,38 +36,14 @@
     }
   }
 
-  const newsItems = [
-    {
-      category: 'Buildings',
-      title: 'Edificio Latam',
-      image: 'https://cloudfront-us-east-1.images.arcpublishing.com/infobae/OYDWL3CSPFFFPJZYW56PCM6LBE.jpg'
-    },
-    {
-      category: 'Buildings',
-      title: 'Edificio Alonso',
-      image: 'https://ambientesdigital.com/wp-content/uploads/2023/06/R1A0137-.jpg'
-    },
-    {
-      category: 'Buildings',
-      title: 'Edificio Kaufman',
-      image: 'https://www.kaufmann.cl/documents/68916/166093/head-nuestro-equipo.jpg/0c8e2e65-b191-5e8a-735b-7e6218fdb758?t=1597699010935'
-    },
-    {
-      category: 'Buildings',
-      title: 'Edificio Sheraton',
-      image: 'https://images2.mega.cl/meganoticias/2024/07/25/anteproyecto-sheraton-santiago_453841_2_66a29fd6e1f2d.jpg'
-    },
-    {
-      category: 'Buildings',
-      title: 'Edificio Bodenor',
-      image: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEju6-MP0bnd5WqmYlF1HhF3p9KD4RFxe3MXv_0jI5dd-tJHl7uGVodDwKYE5ITSCBbHVM_gACjfbu4OZQt1dHeoIY1Yw-24oG5WW6ai_gEiZidwM9-mdOuDGAgzGxL-NrnS3ZklKlCiUvM/s1600/Vigas+Joist++Arquitectura+en+Acero++Vigas+Estructurales++Entrepisos+con+viguetas+met%25C3%25A1licas+steel+joist+%25283%2529.jpg'
-    },
-    {
-      category: 'Buildings',
-      title: 'Cine Hoyts La Reina',
-      image: 'https://arc-anglerfish-arc2-prod-copesa.s3.amazonaws.com/public/IIJXQ7BEYNGMZNZPZ3PUK7FCUA.png'
-    }
-  ];
+  import { buildings } from '$lib/config/buildings';
+
+  const newsItems = buildings.map(building => ({
+    category: 'Buildings',
+    title: building.title,
+    image: building.image,
+    slug: building.slug
+  }));
 
   let visibleCards = 2.25;
   let currentIndex = 0;
@@ -89,7 +65,7 @@
 <section class="w-full bg-white">
   <div class="max-w-[1400px] mx-auto py-16 px-8">
     <div class="flex justify-between items-center mb-8">
-      <h2 class="text-4xl">News</h2>
+      <h2 class="text-4xl">Edificios</h2>
       <div class="flex items-center gap-4">
         <div class="flex gap-2">
           <button
@@ -126,24 +102,23 @@
         style="transform: translateX(-{currentIndex * (100 / visibleCards)}%);"
       >
         {#each newsItems as item}
-          <article class="flex-shrink-0 w-[calc(44.44%-1.5rem)] group cursor-pointer">
-            <div class="relative aspect-[16/9] overflow-hidden mb-4">
-              <img
-                src={item.image}
-                alt=""
-                class="w-full h-full object-cover transition-transform duration-600 ease-out group-hover:scale-[1.01]"
-              />
-              <span class="absolute top-4 left-4 px-3 py-1 bg-white text-sm rounded z-10">
-                {item.category}
-              </span>
-            </div>
-            <time class="text-sm text-gray-600 block mb-2">
-              {item.date}
-            </time>
-            <h3 class="text-xl font-normal leading-tight">
-              {item.title}
-            </h3>
-          </article>
+          <a href="/edificio/{item.slug}" class="flex-shrink-0 w-[calc(44.44%-1.5rem)] group cursor-pointer">
+            <article>
+              <div class="relative aspect-[16/9] overflow-hidden mb-4">
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  class="w-full h-full object-cover transition-transform duration-600 ease-out group-hover:scale-[1.01]"
+                />
+                <span class="absolute top-4 left-4 px-3 py-1 bg-white text-sm rounded z-10">
+                  {item.category}
+                </span>
+              </div>
+              <h3 class="text-xl font-normal leading-tight">
+                {item.title}
+              </h3>
+            </article>
+          </a>
         {/each}
       </div>
     </div>
