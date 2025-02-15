@@ -12,8 +12,8 @@
 
 <SectionWrapper nonMovingComponent={First}>
     <EntrySection contentComponent={Mapa} />
+    
 </SectionWrapper>
-
 
 
 
