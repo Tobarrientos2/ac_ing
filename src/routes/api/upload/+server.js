@@ -12,14 +12,34 @@ export async function POST({ request }) {
         }
 
         const staticDir = 'static';
-        const filename = file.name;
-        const filePath = path.join(staticDir, filename);
+        let filename = file.name;
 
-        // Verificar si el archivo ya existe
-        if (fs.existsSync(filePath)) {
-            return json({ error: 'Ya existe un archivo con ese nombre' }, { status: 400 });
+        if (formData.get('isFavicon')) {
+            // Guardar como favicon.ico
+            filename = 'favicon.svg';
+            // Si ya existe un favicon anterior, eliminarlo
+            const faviconPath = path.join(staticDir, filename);
+            if (fs.existsSync(faviconPath)) {
+                fs.unlinkSync(faviconPath);
+            }
+        } else if (formData.get('isLogo')) {
+            // Obtener la extensión del archivo original
+            const extension = file.name.split('.').pop();
+            // Guardar como logo.extension
+            filename = `logo.${extension}`;
+            // Si ya existe un logo anterior con otra extensión, eliminarlo
+            const possibleExtensions = ['jpg', 'jpeg', 'png', 'gif', 'svg'];
+            possibleExtensions.forEach(ext => {
+                const oldLogoPath = path.join(staticDir, `logo.${ext}`);
+                if (fs.existsSync(oldLogoPath)) {
+                    fs.unlinkSync(oldLogoPath);
+                }
+            });
         }
 
+        const filePath = path.join(staticDir, filename);
+        
+        // Si el archivo existe, simplemente lo sobrescribiremos
         // Convertir el archivo a un buffer y guardarlo
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);

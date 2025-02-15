@@ -7,14 +7,15 @@ export async function GET() {
         const staticDir = 'static';
         const files = fs.readdirSync(staticDir);
         
-        // Filtra solo archivos de imagen
+        // Filtrar solo archivos de imagen
         const imageFiles = files.filter(file => {
-            const ext = path.extname(file).toLowerCase();
-            return ['.jpg', '.jpeg', '.png', '.gif', '.webp'].includes(ext);
+            const extension = file.toLowerCase().split('.').pop();
+            return ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'].includes(extension);
         });
 
         return json({ images: imageFiles });
     } catch (error) {
-        return json({ error: 'Error reading directory' }, { status: 500 });
+        console.error('Error reading images:', error);
+        return json({ error: 'Error al leer las imágenes' }, { status: 500 });
     }
 } 

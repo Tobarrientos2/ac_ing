@@ -1,5 +1,5 @@
 <script>
-    import { Icon, Photo, H2, H3 } from "svelte-hero-icons";
+    import { Icon, Photo, H2, H3, User } from "svelte-hero-icons";
     import { onMount } from 'svelte';
     let showModal = false;
     let selectedImages = [];
@@ -9,6 +9,9 @@
     let newFileName = '';
     let errorMessage = '';
     let fileInput;
+    let profileImage = null;
+    let profileImageInput;
+    let hasFavicon = false;
 
     let buildings = [
         {
@@ -89,6 +92,21 @@
             const response = await fetch('/api/images');
             const data = await response.json();
             allImages = data.images;
+            console.log('Archivos disponibles:', allImages); // Debug
+
+            // Buscar logo y favicon
+            const logoFile = allImages.find(img => img.startsWith('logo.'));
+            const faviconFile = allImages.find(img => img.startsWith('favicon.'));
+            
+            if (logoFile) {
+                console.log('Logo encontrado:', logoFile);
+                profileImage = logoFile;
+            }
+            
+            if (faviconFile) {
+                console.log('Favicon encontrado:', faviconFile);
+                hasFavicon = true;
+            }
         } catch (error) {
             console.error('Error fetching images:', error);
         }
@@ -284,18 +302,19 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    // Forzar recarga de la imagen actualizando el src con un timestamp
-                    const timestamp = new Date().getTime();
-                    const imgElement = document.querySelector(`img[src="/${imageName}"]`);
-                    if (imgElement) {
-                        imgElement.src = `/${imageName}?t=${timestamp}`;
+                    // Actualizar la lista de imágenes
+                    const index = allImages.indexOf(imageName);
+                    if (index !== -1) {
+                        allImages[index] = data.newName;
+                        allImages = [...allImages]; // Forzar actualización
                     }
+                    editingImage = null;
                     errorMessage = '';
                 } else {
                     errorMessage = data.error;
                 }
             } catch (error) {
-                errorMessage = 'Error al reemplazar el archivo';
+                errorMessage = 'Error al renombrar el archivo';
                 console.error('Error:', error);
             }
         };
@@ -346,6 +365,85 @@
         };
 
         fileInput.click();
+    }
+
+    async function uploadProfileImage() {
+        profileImageInput = document.createElement('input');
+        profileImageInput.type = 'file';
+        profileImageInput.accept = 'image/*,.svg';
+        
+        profileImageInput.onchange = async (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+
+            // Verificar que es una imagen o SVG
+            if (!file.type.startsWith('image/') && !file.type.includes('svg')) {
+                errorMessage = 'Por favor, selecciona un archivo de imagen o SVG';
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('isLogo', 'true');
+
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    profileImage = data.filename;
+                    errorMessage = '';
+                } else {
+                    errorMessage = data.error;
+                }
+            } catch (error) {
+                errorMessage = 'Error al subir el logo';
+                console.error('Error:', error);
+            }
+        };
+
+        profileImageInput.click();
+    }
+
+    // Agregar una nueva función para manejar el favicon
+    async function uploadFavicon() {
+        profileImageInput = document.createElement('input');
+        profileImageInput.type = 'file';
+        profileImageInput.accept = 'image/*,.svg';
+        
+        profileImageInput.onchange = async (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('isFavicon', 'true');
+
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    hasFavicon = true;
+                    errorMessage = '';
+                } else {
+                    errorMessage = data.error;
+                }
+            } catch (error) {
+                errorMessage = 'Error al subir el favicon';
+                console.error('Error:', error);
+            }
+        };
+
+        profileImageInput.click();
     }
 </script>
 
@@ -437,6 +535,55 @@
 
     <!-- Contenido principal -->
     <div class="flex-1 p-4 container mx-auto max-w-4xl">
+        <div class="flex justify-end mb-4">
+            <div class="relative group">
+                {#if profileImage}
+                    <img 
+                        src={`/${profileImage}`} 
+                        alt="Logo"
+                        class="w-12 h-12 rounded-full object-cover cursor-pointer hover:opacity-90"
+                        on:click={uploadProfileImage}
+                    />
+                {:else}
+                    <button 
+                        class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
+                        on:click={uploadProfileImage}
+                    >
+                        <Icon src={User} class="w-6 h-6 text-gray-600" />
+                    </button>
+                {/if}
+                
+                <!-- Dropdown Menu -->
+                <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div class="py-1">
+                        <button
+                            class="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
+                            on:click={uploadProfileImage}
+                        >
+                            Cambiar logo
+                        </button>
+                        {#if hasFavicon}
+                            <div class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer" on:click={uploadFavicon}>
+                                <img 
+                                    src="/favicon.svg" 
+                                    alt="Favicon actual" 
+                                    class="w-4 h-4 mr-2"
+                                />
+                                <span>Cambiar favicon</span>
+                            </div>
+                        {:else}
+                            <button
+                                class="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
+                                on:click={uploadFavicon}
+                            >
+                                Agregar favicon
+                            </button>
+                        {/if}
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <section class="mb-8">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
                 {#each buildings as item}
