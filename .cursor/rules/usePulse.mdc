@@ -1,0 +1,444 @@
+---
+description: usePulse
+globs: 
+---
+ ---
+description: Pulse Usage Rule
+globs: **/*.svelte
+---
+# Pulse Usage Rule
+
+Rules for using pulses in the application, including sending and reading data.
+
+<rule>
+name: pulse_usage_respect
+description: Standards for using pulses in components
+filters:
+  - type: file_extension
+    pattern: "\\.svelte$"
+  - type: content
+    pattern: "(?s).*ClientPulse|ReadPulse.*"
+  - type: event
+    pattern: "file_create|file_modify"
+
+actions:
+  - type: suggest
+    message: |
+      # Uso de Pulses en la Aplicación
+
+      Los pulses son un mecanismo para manejar la lógica de negocio y el estado de la aplicación de forma desacoplada.
+      Permiten tanto enviar datos (ClientPulse) como leer el estado del último pulse ejecutado (ReadPulse).
+
+      ## Tipos de Pulses
+
+      1. ClientPulse (Envío de datos):
+         ```typescript
+         import { Pulse as ClientPulse } from '$lib/clientPulses';
+
+         // Uso en componente
+         async function submitData() {
+           try {
+             const result = await ClientPulse.PulseName({
+               // payload
+             });
+
+             if (result.success) {
+               // Manejar éxito
+             } else {
+               // Manejar error
+             }
+           } catch (error) {
+             // Manejar excepción
+           }
+         }
+         ```
+
+      2. ReadPulse (Lectura de estado):
+         ```typescript
+         import { ReadPulse } from '$lib/types/pulses';
+
+         onMount(() => {
+           if (ReadPulse.PulseName?.subscribe) {
+             const unsubscribe = ReadPulse.PulseName.subscribe((result) => {
+               if (result) {
+                 // Procesar resultado
+               }
+             });
+
+             return () => unsubscribe();
+           }
+         });
+         ```
+
+      ## Estructura de un Pulse
+
+      1. Definición del Pulse:
+         ```typescript
+         // src/lib/types/pulses/[pulse-name].ts
+         export interface PulsePayload {
+           // Definición del payload
+         }
+
+         export const PulseName = {
+           type: 'PulseName',
+           handler: async (payload: PulsePayload) => {
+             // Lógica del pulse
+             return {
+               success: true,
+               data: { /* ... */ }
+             };
+           }
+         };
+         ```
+
+      2. Uso en Componente:
+         ```svelte
+         <script lang="ts">
+           import { Pulse as ClientPulse } from '$lib/clientPulses';
+           import { ReadPulse } from '$lib/types/pulses';
+           import { onMount } from 'svelte';
+
+           let data;
+           let isLoading = false;
+           let error = null;
+
+           async function handleAction() {
+             isLoading = true;
+             try {
+               const result = await ClientPulse.PulseName({
+                 field: 'value'
+               });
+
+               if (result.success) {
+                 // Procesar éxito
+               }
+             } catch (err) {
+               error = err.message;
+             } finally {
+               isLoading = false;
+             }
+           }
+
+           onMount(() => {
+             // Suscribirse a actualizaciones
+             const unsubscribe = ReadPulse.PulseName?.subscribe(result => {
+               if (result) {
+                 data = result.data;
+               }
+             });
+
+             return () => {
+               if (unsubscribe) unsubscribe();
+             };
+           });
+         </script>
+         ```
+
+      ## Mejores Prácticas
+
+      1. Manejo de Estado:
+         - Usar `isLoading` para estados de carga
+         - Manejar errores apropiadamente
+         - Limpiar suscripciones en cleanup
+
+      2. Tipado:
+         - Definir interfaces para payloads
+         - Usar tipos para respuestas
+         - Documentar estructuras de datos
+
+      3. Organización:
+         - Un pulse por archivo
+         - Nombres descriptivos
+         - Separar lógica de UI
+
+      4. Suscripciones:
+         - Verificar existencia antes de suscribir
+         - Limpiar suscripciones en cleanup
+         - Usar async/await apropiadamente
+
+      ## Validación de Integración
+
+      Antes de dar por completada la integración de un Pulse en un componente, es OBLIGATORIO realizar las siguientes validaciones:
+
+      1. **Verificación de Endpoints**:
+         ```typescript
+         import { page } from '$app/stores';
+         
+         // En el setup inicial del componente
+         async function validatePulseEndpoints() {
+           const baseUrl = $page.url.origin;
+           const endpoints = [
+             `${baseUrl}/api-proxy/${PulseName}`,
+             // Agregar otros endpoints relacionados
+           ];
+           
+           for (const endpoint of endpoints) {
+             try {
+               const response = await fetch(endpoint, { method: 'HEAD' });
+               if (!response.ok) {
+                 console.error(`Endpoint no disponible: ${endpoint}`);
+                 // Manejar el error apropiadamente
+               }
+             } catch (error) {
+               console.error(`Error al verificar endpoint: ${endpoint}`, error);
+             }
+           }
+         }
+         ```
+
+      2. **Validación de Estado Inicial**:
+         ```typescript
+         function validateInitialState() {
+           // Verificar propiedades críticas
+           const criticalProps = ['exerciseTitle', 'data', /* otras props */];
+           for (const prop of criticalProps) {
+             if (this[prop] === null || this[prop] === undefined) {
+               console.error(`Propiedad crítica ${prop} es null/undefined`);
+               // Manejar el error apropiadamente
+             }
+           }
+         }
+         ```
+
+      3. **Monitoreo de Consola**:
+         ```typescript
+         // En desarrollo, agregar esto al inicio del componente
+         onMount(() => {
+           if (import.meta.env.DEV) {
+             const originalError = console.error;
+             console.error = (...args) => {
+               // Capturar errores específicos de Pulses
+               if (args[0]?.includes('Error en ClientPulse')) {
+                 // Manejar específicamente
+               }
+               originalError.apply(console, args);
+             };
+             
+             return () => {
+               console.error = originalError;
+             };
+           }
+         });
+         ```
+
+      4. **Checklist de Integración**:
+         - [ ] Endpoints verificados y accesibles
+         - [ ] Estado inicial validado
+         - [ ] Manejo de errores implementado
+         - [ ] Suscripciones limpiadas correctamente
+         - [ ] Consola limpia de errores relacionados con Pulses
+         - [ ] Tipos correctamente definidos e importados
+         - [ ] Pruebas de integración ejecutadas
+
+      5. **Tests de Integración**:
+         ```typescript
+         import { render, fireEvent } from '@testing-library/svelte';
+         import { vi } from 'vitest';
+         
+         describe('Componente con Pulse', () => {
+           test('maneja correctamente el estado inicial', () => {
+             const { container } = render(Componente);
+             // Verificar estado inicial
+           });
+           
+           test('maneja errores de Pulse apropiadamente', async () => {
+             // Simular error de Pulse
+             vi.spyOn(console, 'error');
+             // Verificar manejo de error
+           });
+           
+           test('limpia suscripciones al desmontar', () => {
+             // Verificar cleanup
+           });
+         });
+         ```
+
+      ## Patrones Comunes
+
+      1. Envío con Feedback:
+         ```typescript
+         async function submitWithFeedback() {
+           isSubmitting = true;
+           feedback = '';
+           
+           try {
+             const result = await ClientPulse.PulseName({
+               // payload
+             });
+
+             if (result.success) {
+               feedback = 'Operación exitosa';
+             } else {
+               feedback = 'Error: ' + result.error;
+             }
+           } catch (error) {
+             feedback = 'Error inesperado';
+           } finally {
+             isSubmitting = false;
+           }
+         }
+         ```
+
+      2. Lectura con Transformación:
+         ```typescript
+         onMount(() => {
+           if (ReadPulse.PulseName?.subscribe) {
+             const unsubscribe = ReadPulse.PulseName.subscribe((result) => {
+               if (result) {
+                 // Transformar datos si es necesario
+                 const transformed = result.data.map(item => ({
+                   ...item,
+                   displayName: capitalizeFirstLetter(item.name)
+                 }));
+                 
+                 items = transformed;
+               }
+             });
+
+             return () => unsubscribe();
+           }
+         });
+         ```
+
+      3. Manejo de Estado Compuesto:
+         ```typescript
+         let state = {
+           isLoading: false,
+           error: null,
+           data: null
+         };
+
+         async function handlePulse() {
+           state.isLoading = true;
+           state.error = null;
+
+           try {
+             const result = await ClientPulse.PulseName({
+               // payload
+             });
+
+             if (result.success) {
+               state.data = result.data;
+             } else {
+               state.error = result.error;
+             }
+           } catch (error) {
+             state.error = error.message;
+           } finally {
+             state.isLoading = false;
+           }
+         }
+         ```
+
+      ## Validación de Integración
+
+      Después de implementar un pulse en un componente, es OBLIGATORIO realizar las siguientes validaciones antes de dar por completada la integración:
+
+      1. **Verificación de Endpoints**:
+         ```typescript
+         // Usar Playwright para validar endpoints
+         await page.goto('http://localhost:5173');
+         const errors = [];
+         
+         page.on('console', msg => {
+           if (msg.type() === 'error') {
+             errors.push(msg.text());
+           }
+         });
+
+         // Verificar que no hay errores 404 en los endpoints
+         const networkErrors = errors.filter(e => e.includes('404'));
+         if (networkErrors.length > 0) {
+           throw new Error(`Endpoints no disponibles: ${networkErrors.join(', ')}`);
+         }
+         ```
+
+      2. **Validación de Estado Inicial**:
+         ```typescript
+         // Capturar estado inicial
+         const initialState = await page.evaluate(() => {
+           // Obtener propiedades críticas del componente
+           const component = document.querySelector('mi-componente');
+           return {
+             // Propiedades a validar
+             props: component.__svelte,
+             // Estado del componente
+             state: component.__svelte.ctx
+           };
+         });
+
+         // Verificar propiedades null/undefined
+         const nullProps = Object.entries(initialState.props)
+           .filter(([_, value]) => value === null || value === undefined);
+
+         if (nullProps.length > 0) {
+           throw new Error(`Propiedades críticas null/undefined: ${nullProps.map(([key]) => key).join(', ')}`);
+         }
+         ```
+
+      3. **Monitoreo de Consola**:
+         ```typescript
+         // Capturar errores de consola durante la interacción
+         const consoleErrors = [];
+         page.on('console', msg => {
+           if (msg.type() === 'error') {
+             consoleErrors.push(msg.text());
+           }
+         });
+
+         // Realizar acciones que involucren al pulse
+         await page.click('#trigger-pulse-button');
+
+         // Verificar errores
+         if (consoleErrors.length > 0) {
+           throw new Error(`Errores en consola durante la integración: ${consoleErrors.join(', ')}`);
+         }
+         ```
+
+      4. **Lista de Verificación Final**:
+         - [ ] Endpoints responden correctamente (no hay 404)
+         - [ ] No hay propiedades críticas null/undefined
+         - [ ] No hay errores en consola relacionados con pulses
+         - [ ] Las suscripciones se limpian correctamente
+         - [ ] El estado se actualiza como se espera
+         - [ ] Los manejadores de error funcionan correctamente
+
+      IMPORTANTE: No proceder con el commit hasta que todas las validaciones pasen correctamente.
+
+      ## Notas Importantes
+      - Los pulses son asíncronos
+      - Siempre manejar errores
+      - Verificar suscripciones antes de usar
+      - Limpiar recursos en cleanup
+      - Mantener la lógica de UI separada
+      - Usar tipos cuando sea posible
+
+examples:
+  - input: |
+      // Uso incorrecto de pulse
+      const result = ClientPulse.PulseName(data);
+      if (result) {
+        // hacer algo
+      }
+    output: |
+      // Uso correcto de pulse
+      try {
+        const result = await ClientPulse.PulseName(data);
+        if (result.success) {
+          // Manejar éxito
+        } else {
+          // Manejar error
+        }
+      } catch (error) {
+        // Manejar excepción
+      }
+
+metadata:
+  priority: high
+  version: 1.0
+  tags:
+    - pulses
+    - state-management
+    - async
+    - svelte
+</rule>

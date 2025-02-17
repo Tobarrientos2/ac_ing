@@ -1,0 +1,228 @@
+---
+description: createIssue
+globs: 
+---
+---
+description: Cursor Rules Location
+globs: **/*.svelte
+---
+# Cursor Rules Location
+
+Rules for Svelte files and version control conventions.
+
+<rule>
+name: svelte_files_respect
+description: Standards for working with Svelte files and version control
+filters:
+  - type: file_extension
+    pattern: "\\.svelte$"
+  - type: content
+    pattern: "(?s)<script.*?>.*?</script>"
+  - type: event
+    pattern: "file_modify"
+
+actions:
+  - type: suggest
+    message: |
+      # Agent Behavior
+      - Follow commit and issue conventions for version control
+      - Provide clear and detailed explanations in Spanish
+      - Use "Tobarrientos2" as the GitHub username
+      - If issue creation fails, search for repositories using MCP GitHub server:
+        ```typescript
+        // Search all repositories for the user
+        const repos = await mcp_search_repositories({
+          query: "user:Tobarrientos2"
+        });
+        ```
+
+      # Convenciones de Control de Versiones
+
+      ## Issues
+      1. Estructura Básica:
+         ```markdown
+         # Título
+         [Tipo]: Descripción concisa
+
+         ## Descripción
+         Explicación detallada del cambio o funcionalidad
+
+         ## Detalles Técnicos
+         - Arquitectura afectada
+         - Componentes involucrados
+         - Consideraciones técnicas
+
+         ## Código de Ejemplo (si aplica)
+         ```typescript
+         // Ejemplo de implementación
+         ```
+
+         ## Tareas
+         - [ ] Tarea 1
+         - [ ] Tarea 2
+         - [ ] Agregar tests
+         - [ ] Actualizar documentación
+
+         ## Beneficios
+         - Beneficio 1
+         - Beneficio 2
+
+         ## Notas Adicionales
+         Cualquier información relevante
+         ```
+
+      2. Tipos de Issues:
+         - `Feature`: Nueva funcionalidad
+         - `Bug`: Error a corregir
+         - `Enhancement`: Mejora de funcionalidad existente
+         - `Documentation`: Cambios en documentación
+         - `Test`: Relacionado con testing
+         - `Technical Debt`: Mejoras técnicas
+
+      3. Etiquetas Recomendadas:
+         - `priority/high`
+         - `priority/medium`
+         - `priority/low`
+         - `status/in-progress`
+         - `status/review-needed`
+         - `type/bug`
+         - `type/feature`
+         - `type/enhancement`
+         - `scope/frontend`
+         - `scope/testing`
+
+      ## Commits
+
+      1. Estructura del Mensaje:
+         ```
+         <tipo>(<alcance>): #<número-issue> <descripción>
+
+         [cuerpo]
+
+         [pie]
+         ```
+
+      2. Tipos de Commit:
+         - `feat`: Nueva funcionalidad
+         - `fix`: Corrección de errores
+         - `test`: Adición o modificación de tests
+         - `docs`: Cambios en documentación
+         - `refactor`: Cambios que no arreglan errores ni añaden funcionalidades
+         - `style`: Cambios que no afectan el significado del código
+         - `perf`: Mejoras de rendimiento
+         - `chore`: Tareas de mantenimiento
+
+      3. Alcances Comunes:
+         - `ui`: Cambios en la interfaz
+         - `auth`: Autenticación
+         - `api`: Cambios en la API
+         - `test`: Testing
+         - `deps`: Dependencias
+         - `config`: Configuración
+
+      4. Ejemplos Completos:
+         ```
+         feat(ui): #123 implementar nuevo componente de formulario
+
+         - Agregar validación en tiempo real
+         - Integrar con el sistema de diseño
+         - Añadir tests unitarios
+
+         BREAKING CHANGE: La prop 'validate' ahora es requerida
+         ```
+
+         ```
+         fix(auth): #456 corregir error en proceso de login
+
+         - Resolver problema de tokens expirados
+         - Mejorar manejo de errores
+
+         Closes #456
+         ```
+
+      5. Reglas Importantes:
+         - Siempre referenciar el número de issue
+         - Usar el tipo más específico para el cambio
+         - Descripción en español y en presente
+         - Mantener la primera línea menor a 72 caracteres
+         - Separar título, cuerpo y pie con líneas en blanco
+         - Incluir BREAKING CHANGE si hay cambios que rompen compatibilidad
+
+      # Flujo de Trabajo Recomendado
+
+      1. Revisión de Cambios:
+         - Antes de crear el issue o hacer commits, revisar todos los archivos modificados
+         - Verificar qué sugerencias de la IA fueron aceptadas y cuáles no
+         - Entender el estado actual real del código
+         - Documentar los cambios efectivamente aplicados
+
+      2. Preparación:
+         - Crear issue detallado basado en los cambios realmente aplicados
+         - Asignar etiquetas apropiadas
+         - Definir claramente el alcance real
+
+      3. Desarrollo:
+         - Crear rama desde dev: `feature/#123-nombre-descriptivo`
+         - Implementar cambios siguiendo estándares Svelte
+         - Escribir tests cuando aplique
+
+      4. Commits:
+         - Revisar nuevamente los archivos modificados
+         - Documentar solo los cambios que fueron efectivamente aplicados
+         - Hacer commits frecuentes y atómicos
+         - Seguir convención de mensajes
+         - Referenciar siempre el issue
+         - Asegurarse que el mensaje del commit refleje los cambios reales
+
+      5. Finalización:
+         - Asegurar que los tests pasan
+         - Actualizar documentación si es necesario
+         - Crear PR siguiendo template
+         - Actualizar estado del issue
+
+      # Notas Adicionales
+      - Mantener consistencia en el idioma (español)
+      - Seguir las convenciones de Svelte
+      - Documentar cambios significativos
+      - Priorizar la claridad sobre la brevedad
+      - Mantener el código limpio y bien documentado
+
+examples:
+  - input: |
+      <script>
+        // Código Svelte sin seguir convenciones
+      </script>
+    output: "Código Svelte siguiendo las convenciones establecidas"
+
+metadata:
+  priority: high
+  version: 1.0
+</rule>
+
+
+
+### 0.3 Verificación OBLIGATORIA de Estado Actual
+- **CRÍTICO**: La IA DEBE SIEMPRE verificar el estado actual de los archivos antes de:
+  1. Crear un issue
+  2. Hacer commit/push
+  3. Sugerir cambios adicionales
+
+- **Proceso de Verificación**:
+  ```typescript
+  // SIEMPRE ejecutar antes de cualquier acción
+  await read_file({
+    relative_workspace_path: "path/to/file",
+    should_read_entire_file: true
+  });
+  ```
+
+- **Reglas de Verificación**:
+  * NO asumir que los cambios sugeridos fueron aplicados
+  * NO basarse en el historial de la conversación
+  * SIEMPRE leer el estado actual de los archivos
+  * SIEMPRE informar al usuario si se encuentran discrepancias
+
+- **Comportamiento Esperado**:
+  * Si la IA sugiere cambios → DEBE verificar si fueron aplicados
+  * Si la IA va a crear un issue → DEBE verificar el estado actual
+  * Si la IA va a hacer push → DEBE usar la información de la última verificación

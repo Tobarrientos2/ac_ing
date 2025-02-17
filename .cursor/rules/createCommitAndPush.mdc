@@ -1,0 +1,174 @@
+---
+description: createCommitAndPush
+globs: 
+---
+ ---
+description: Commit and Push Rule
+globs: "**/*"
+---
+# Commit and Push Rule
+
+Reglas para la creación de commits y push usando el MCP de GitHub.
+
+<rule>
+name: commit_and_push_respect
+description: Estándares para commits y push
+filters:
+  - type: event
+    pattern: "file_create|file_modify"
+
+actions:
+  - type: suggest
+    message: |
+      # Proceso de Commit y Push
+
+      ## 1. Verificación de Remote
+      
+      1. **Obtener Remote**:
+         ```bash
+         git remote -v
+         ```
+         
+      2. **Análisis de Remotes**:
+         - Si hay un solo remote:
+           * Usar automáticamente
+         - Si hay múltiples remotes:
+           * Preguntar al usuario cuál usar
+           * Esperar respuesta antes de proceder
+
+      ## 2. Estructura del Commit
+
+      ### 2.1 Formato del Mensaje
+      ```
+      <tipo>(<alcance>): #<issue> <descripción>
+      ```
+
+      ### 2.2 Tipos de Commit
+      | Tipo     | Descripción                                          | Ejemplo                                            |
+      |----------|------------------------------------------------------|---------------------------------------------------|
+      | feat     | Nuevas características                               | `feat: #123 add user authentication`               |
+      | fix      | Corrección de errores                               | `fix: #45 resolve null pointer in login`           |
+      | test     | Adición o modificación de tests                     | `test: #67 add unit tests for UserService`         |
+      | docs     | Cambios en documentación                            | `docs: #89 update API documentation`               |
+      | refactor | Cambios que no arreglan errores ni añaden features  | `refactor: #34 simplify payment logic`            |
+      | chore    | Tareas de mantenimiento                             | `chore: #12 update dependencies`                   |
+      | style    | Cambios que no afectan el significado del código    | `style: #56 format according to style guide`       |
+      | perf     | Cambios de rendimiento                              | `perf: #78 optimize database queries`              |
+
+      ### 2.3 Reglas del Mensaje
+      1. Primera línea:
+         - Tipo en minúsculas
+         - Número de issue precedido por #
+         - Descripción concisa en presente
+         - Máximo 72 caracteres
+         - No terminar con punto
+
+      2. Ejemplos válidos:
+         ```
+         feat: #45 add dark mode support
+         fix: #123 resolve memory leak in video player
+         test: #67 add unit tests for EnviarFeedbackEjercicio pulse
+         docs: #89 update README with setup instructions
+         ```
+
+      ## 3. Proceso de Push con MCP
+
+      ### 3.1 Uso de push_files
+      ```typescript
+      mcp_push_files({
+        owner: "usuario",
+        repo: "repositorio",
+        branch: "nombre-rama",
+        message: "<tipo>: #<issue> <descripción>",
+        files: [
+          {
+            path: "ruta/al/archivo",
+            content: "contenido del archivo"
+          }
+        ]
+      });
+      ```
+
+      ### 3.2 Validaciones
+      1. Verificar:
+         - Rama correcta (dev/main según proyecto)
+         - Mensaje sigue convención
+         - Archivos correctos
+         - Permisos de escritura
+
+      ### 3.3 Manejo de Errores
+      1. Si falla el push:
+         - Verificar permisos
+         - Verificar estado del remote
+         - Informar al usuario
+         - Sugerir soluciones
+
+      ## 4. Flujo Completo
+
+      1. **Preparación**:
+         ```
+         1. Verificar remote
+         2. Identificar rama
+         3. Validar cambios
+         ```
+
+      2. **Commit**:
+         ```
+         1. Determinar tipo de cambio
+         2. Obtener número de issue
+         3. Crear mensaje según convención
+         ```
+
+      3. **Push**:
+         ```
+         1. Usar MCP push_files
+         2. Verificar resultado
+         3. Manejar errores si ocurren
+         ```
+
+      ## 5. Ejemplos Prácticos
+
+      ### 5.1 Push Simple
+      ```typescript
+      // Un solo remote, rama dev
+      mcp_push_files({
+        owner: "Tobarrientos2",
+        repo: "pseudocode_traductor",
+        branch: "dev",
+        message: "feat: #123 add pulse validation",
+        files: [{
+          path: "src/lib/types/pulses/validacion.ts",
+          content: "// contenido del archivo"
+        }]
+      });
+      ```
+
+      ### 5.2 Push con Múltiples Archivos
+      ```typescript
+      mcp_push_files({
+        owner: "Tobarrientos2",
+        repo: "pseudocode_traductor",
+        branch: "dev",
+        message: "test: #45 add tests for multiple pulses",
+        files: [
+          {
+            path: "tests/pulses/pulse1.test.ts",
+            content: "// contenido del test 1"
+          },
+          {
+            path: "tests/pulses/pulse2.test.ts",
+            content: "// contenido del test 2"
+          }
+        ]
+      });
+      ```
+
+metadata:
+  priority: high
+  version: 1.0
+  tags:
+    - git
+    - commit
+    - push
+    - mcp
+</rule>

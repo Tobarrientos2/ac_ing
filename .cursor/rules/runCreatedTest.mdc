@@ -1,0 +1,173 @@
+---
+description: runCreatedTest
+globs: 
+---
+ ---
+description: Run Created Test Rule
+globs: tests/pulses/**/*.test.ts
+---
+# Run Created Test Rule
+
+Reglas para ejecutar y validar los tests de pulses recién creados.
+
+<rule>
+name: run_created_test_respect
+description: Estándares para ejecutar tests de pulses
+filters:
+  - type: file_extension
+    pattern: "\\.test\\.ts$"
+  - type: path
+    pattern: "tests/pulses/"
+  - type: event
+    pattern: "file_create|file_modify"
+
+actions:
+  - type: suggest
+    message: |
+      # Proceso de Ejecución de Tests
+
+      ## 1. Preparación del Entorno
+
+      1. **Verificar Dependencias**:
+         ```bash
+         npm list @playwright/test
+         ```
+         Si no está instalado:
+         ```bash
+         npm install --save-dev @playwright/test
+         ```
+
+      2. **Verificar Configuración**:
+         - Archivo `playwright.config.ts` existe
+         - Configuración adecuada para tests de pulses
+
+      ## 2. Ejecución del Test Específico
+
+      1. **Comando Base**:
+         ```bash
+         npx playwright test [ruta-al-test] --project=chromium
+         ```
+         
+      2. **Opciones Recomendadas**:
+         - `--headed`: Para ver la ejecución (debug)
+         - `--debug`: Para modo debug paso a paso
+         - `--project=chromium`: Ejecutar solo en Chromium
+         - `--grep`: Para ejecutar tests específicos por nombre
+
+      3. **Ejemplos de Uso**:
+         ```bash
+         # Ejecutar un archivo de test específico
+         npx playwright test tests/pulses/nombre-pulse.test.ts --project=chromium
+
+         # Ejecutar con debug
+         npx playwright test tests/pulses/nombre-pulse.test.ts --project=chromium --debug
+
+         # Ejecutar test específico por nombre
+         npx playwright test tests/pulses/nombre-pulse.test.ts --grep "should handle valid input" --project=chromium
+         ```
+
+      ## 3. Análisis de Resultados
+
+      1. **Verificar Salida**:
+         - ✅ Tests pasados: Continuar con el flujo
+         - ❌ Tests fallidos: Analizar error
+
+      2. **Tipos de Errores**:
+         a. **Errores de Pulse**:
+            - Lógica incorrecta
+            - Validación incorrecta
+            - Manejo de casos borde
+            -> Modificar el pulse
+
+         b. **Errores de Test**:
+            - Expectativas incorrectas
+            - Setup incorrecto
+            - Casos de prueba mal definidos
+            -> Modificar el test
+
+         c. **Errores de Tipado**:
+            - Interfaces incorrectas
+            - Tipos faltantes
+            -> Corregir definiciones de tipos
+
+      3. **Proceso de Corrección**:
+         ```
+         1. Identificar tipo de error
+         2. Aplicar corrección apropiada
+         3. Re-ejecutar test
+         4. Repetir hasta que pase
+         ```
+
+      ## 4. Flujo Completo
+
+      ```mermaid
+      graph TD
+        A[Crear Test] --> B[Verificar Entorno]
+        B --> C[Ejecutar Test]
+        C --> D{Test Pasa?}
+        D -->|Sí| E[Continuar Flujo]
+        D -->|No| F[Analizar Error]
+        F --> G{Tipo de Error}
+        G -->|Pulse| H[Modificar Pulse]
+        G -->|Test| I[Modificar Test]
+        G -->|Tipos| J[Corregir Tipos]
+        H --> C
+        I --> C
+        J --> C
+      ```
+
+      ## 5. Comandos por Tipo de Error
+
+      ### 5.1 Error en el Pulse
+      ```bash
+      # 1. Ver error detallado
+      npx playwright test tests/pulses/nombre-pulse.test.ts --project=chromium --debug
+
+      # 2. Modificar pulse
+      # 3. Re-ejecutar test
+      npx playwright test tests/pulses/nombre-pulse.test.ts --project=chromium
+      ```
+
+      ### 5.2 Error en el Test
+      ```bash
+      # 1. Ver error con más contexto
+      npx playwright test tests/pulses/nombre-pulse.test.ts --project=chromium --headed
+
+      # 2. Modificar test
+      # 3. Re-ejecutar con debug si es necesario
+      npx playwright test tests/pulses/nombre-pulse.test.ts --project=chromium --debug
+      ```
+
+      ### 5.3 Error de Tipos
+      ```bash
+      # 1. Verificar errores de tipos
+      npx tsc --noEmit
+
+      # 2. Corregir tipos
+      # 3. Re-ejecutar verificación de tipos y test
+      npx tsc --noEmit && npx playwright test tests/pulses/nombre-pulse.test.ts --project=chromium
+      ```
+
+      ## 6. Notas Importantes
+
+      1. **Máximo de Intentos**:
+         - No más de 3 iteraciones de corrección
+         - Si persiste, revisar diseño del pulse/test
+
+      2. **Documentación**:
+         - Documentar errores encontrados
+         - Documentar soluciones aplicadas
+
+      3. **Casos Especiales**:
+         - Tests que requieren setup especial
+         - Tests con dependencias externas
+         - Tests que requieren mocking
+
+metadata:
+  priority: high
+  version: 1.0
+  tags:
+    - testing
+    - pulses
+    - playwright
+    - debugging

@@ -1,0 +1,317 @@
+---
+description: analyzeSvelteComponent
+globs: 
+---
+ ---
+description: Svelte Component Analysis Rule
+globs: "**/*.svelte"
+---
+# Svelte Component Analysis Rule
+
+Reglas para analizar componentes Svelte e identificar lógicas que pueden ser aisladas en pulses.
+
+<rule>
+name: svelte_analysis_respect
+description: Estándares para identificar lógicas aislables en componentes Svelte
+filters:
+  - type: file_extension
+    pattern: "\\.svelte$"
+  - type: content
+    pattern: "(?s)<script.*?>.*?</script>"
+  - type: event
+    pattern: "file_create|file_modify"
+
+actions:
+  - type: suggest
+    message: |
+      # Análisis de Componentes Svelte
+
+      ## 0. REGLA PRIORITARIA: Migración de Utils y Archivos JS/TS a Pulses
+
+      ### 0.1 Identificación de Importaciones a Migrar
+      - **CRÍTICO**: Toda importación que no sea de:
+        * Librerías externas (node_modules)
+        * Componentes Svelte
+        * ClientPulse (`import { Pulse as ClientPulse } from '../lib/clientPulses'`)
+        * Tipos TypeScript
+        DEBE ser migrada a Pulses.
+
+      ### 0.2 Proceso de Migración
+      1. **Análisis de Importaciones**:
+         ```typescript
+         // ❌ Importaciones a migrar
+         import { utilFunction } from '../utils/someUtil';
+         import { helper } from '../helpers/helper';
+         import { service } from '../services/service';
+
+         // ✅ Importaciones permitidas
+         import { Pulse as ClientPulse } from '../lib/clientPulses';
+         import Component from './Component.svelte';
+         import type { SomeType } from '../types/types';
+         ```
+
+      2. **Pasos para cada importación identificada**:
+         a. Localizar el archivo fuente
+         b. Analizar su lógica
+         c. Diseñar uno o más pulses que la reemplacen
+         d. Eliminar el archivo original si ya no es necesario
+
+      3. **Si el archivo no existe**:
+         a. Analizar el uso en el componente
+         b. Inferir la lógica necesaria
+         c. Crear pulses basados en esa lógica
+         d. Eliminar las importaciones
+
+      ### 0.3 Ejemplo de Migración
+      ```typescript
+      // Antes (en utils/exerciseUtils.js)
+      export function checkAnswer(input, solution) {
+        return {
+          isCorrect: input === solution,
+          feedback: input === solution ? '¡Correcto!' : 'Intenta de nuevo'
+        };
+      }
+
+      // Después (como Pulse)
+      const VerificarRespuesta = {
+        type: 'VerificarRespuesta',
+        handler: async (payload: { respuesta: string, solucion: string }) => {
+          return {
+            success: true,
+            data: {
+              esCorrecta: payload.respuesta === payload.solucion,
+              mensaje: payload.respuesta === payload.solucion 
+                ? '¡Correcto!' 
+                : 'Intenta de nuevo'
+            }
+          };
+        }
+      };
+      ```
+
+      ## 1. Patrones para Identificar Lógicas Aislables
+
+      ### 1.1 Por Tipo de Operación
+      1. **Operaciones Asíncronas**:
+         ```typescript
+         // Candidato para pulse
+         async function submitData() {
+           try {
+             const result = await apiCall();
+             // Procesar resultado
+           } catch (error) {
+             // Manejar error
+           }
+         }
+         ```
+
+      2. **Validaciones**:
+         ```typescript
+         // Candidato para pulse
+         function validateInput(data) {
+           const errors = [];
+           if (!data.field) errors.push('Campo requerido');
+           return {
+             isValid: errors.length === 0,
+             errors
+           };
+         }
+         ```
+
+      3. **Transformaciones de Datos**:
+         ```typescript
+         // Candidato para pulse
+         function transformData(rawData) {
+           return rawData.map(item => ({
+             id: item.id,
+             displayName: formatName(item.name)
+           }));
+         }
+         ```
+
+      4. **Cálculos Complejos**:
+         ```typescript
+         // Candidato para pulse
+         function calculateMetrics(data) {
+           // Lógica compleja que podría ser reutilizada
+           return {
+             total: data.reduce((sum, item) => sum + item.value, 0),
+             average: data.length > 0 ? sum / data.length : 0
+           };
+         }
+         ```
+
+      ### 1.2 Por Características
+      1. **Reutilización**:
+         - Lógica que se repite en múltiples componentes
+         - Operaciones genéricas no específicas al componente
+         - Funcionalidad que podría ser compartida
+
+      2. **Complejidad**:
+         - Funciones con más de 10 líneas
+         - Lógica con múltiples condiciones
+         - Operaciones con varios pasos
+
+      3. **Estado**:
+         - Manejo de estado complejo
+         - Estado que podría ser compartido
+         - Actualizaciones de estado asíncronas
+
+      4. **Dependencias Externas**:
+         - Llamadas a APIs
+         - Interacción con servicios
+         - Operaciones con efectos secundarios
+
+      ## 2. Indicadores de Código Aislable
+
+      ### 2.1 Señales Positivas
+      - ✅ Función no depende del estado local del componente
+      - ✅ Operación puede ser útil en otros contextos
+      - ✅ Lógica es independiente de la UI
+      - ✅ Función tiene un propósito único y claro
+      - ✅ Operación maneja su propio estado
+      - ✅ Función retorna datos estructurados
+      - ✅ Lógica requiere validación de entrada
+      - ✅ Operación es asíncrona
+
+      ### 2.2 Señales Negativas
+      - ❌ Función manipula directamente el DOM
+      - ❌ Lógica específica de la UI
+      - ❌ Función depende fuertemente del contexto del componente
+      - ❌ Operación simple (1-2 líneas)
+      - ❌ Lógica puramente de presentación
+      - ❌ Función sin retorno de datos
+      - ❌ Manipulación directa de eventos del DOM
+
+      ## 3. Ejemplos de Análisis
+
+      ### 3.1 LineMatchingExercise.svelte
+      
+      **Candidatos para Pulses**:
+
+      1. **Verificación de Respuesta**:
+         ```typescript
+         // Actual
+         function checkAnswer() {
+           if (!userInput.trim()) {
+             feedback = 'Por favor, escribe tu respuesta';
+             return;
+           }
+           isCorrect = userInput.trim().toLowerCase() === 
+                      currentExercise.solutionLine.trim().toLowerCase();
+         }
+
+         // Debería ser un Pulse
+         const VerificarRespuesta = {
+           type: 'VerificarRespuesta',
+           handler: async (payload: { respuesta: string, solucion: string }) => {
+             const { respuesta, solucion } = payload;
+             return {
+               success: true,
+               data: {
+                 isCorrect: respuesta.trim().toLowerCase() === 
+                           solucion.trim().toLowerCase(),
+                 feedback: // mensaje según resultado
+               }
+             };
+           }
+         };
+         ```
+
+      2. **Generación de Ejercicio**:
+         ```typescript
+         // Actual
+         function generateNewExercise() {
+           currentExercise = getPseudoCodeAndSolutionLines(exercises);
+           // Reset de estado
+         }
+
+         // Debería ser un Pulse
+         const GenerarEjercicio = {
+           type: 'GenerarEjercicio',
+           handler: async () => {
+             return {
+               success: true,
+               data: {
+                 ejercicio: // nuevo ejercicio seleccionado,
+                 metadata: // información adicional
+               }
+             };
+           }
+         };
+         ```
+
+      3. **Conteo de Líneas**:
+         ```typescript
+         // Actual
+         function countExerciseLines() {
+           totalLines = 0;
+           usableLines = 0;
+           exercises.forEach(exercise => {
+             // Lógica de conteo
+           });
+         }
+
+         // Debería ser un Pulse
+         const ContarLineasEjercicio = {
+           type: 'ContarLineasEjercicio',
+           handler: async (payload: { ejercicios: Exercise[] }) => {
+             return {
+               success: true,
+               data: {
+                 totalLines: // total calculado,
+                 usableLines: // líneas utilizables
+               }
+             };
+           }
+         };
+         ```
+
+      ## 4. Proceso de Análisis
+
+      1. **Revisión de Importaciones** (PASO PRIORITARIO):
+         - Identificar todas las importaciones no permitidas
+         - Marcar archivos utils/helpers para migración
+         - Planificar creación de pulses equivalentes
+
+      2. **Revisión de Lógica**:
+         - Identificar todas las funciones en el componente
+         - Analizar dependencias de cada función
+         - Evaluar complejidad y reutilización
+
+      3. **Evaluación**:
+         - Aplicar indicadores positivos/negativos
+         - Considerar beneficios de aislamiento
+         - Evaluar impacto en mantenibilidad
+
+      4. **Migración**:
+         - Crear pulses para reemplazar utils
+         - Migrar lógica existente a pulses
+         - Eliminar archivos y código obsoleto
+
+      5. **Documentación**:
+         - Registrar decisiones
+         - Documentar razones
+         - Crear issues para seguimiento
+
+      ## 5. Checklist de Migración
+
+      - [ ] Identificadas todas las importaciones no permitidas
+      - [ ] Analizados todos los archivos utils/helpers
+      - [ ] Creados pulses equivalentes
+      - [ ] Actualizado componente para usar nuevos pulses
+      - [ ] Eliminadas importaciones obsoletas
+      - [ ] Eliminados archivos utils/helpers no necesarios
+      - [ ] Documentada la migración
+      - [ ] Creados issues de seguimiento
+
+metadata:
+  priority: critical
+  version: 1.1
+  tags:
+    - svelte
+    - analysis
+    - pulses
+    - refactoring
+    - migration
+</rule>

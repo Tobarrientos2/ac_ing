@@ -1,0 +1,243 @@
+---
+description: createTestForPulse
+globs: 
+---
+---
+description: Pulse Tests Creation Rule
+globs: tests/pulses/**/*.ts
+---
+# Pulse Tests Creation Rule
+
+Rules for creating and maintaining tests for pulses in the application.
+
+<rule>
+name: pulse_tests_respect
+description: Standards for creating tests for pulses
+filters:
+  - type: file_extension
+    pattern: "\\.ts$"
+  - type: path
+    pattern: "tests/pulses/"
+  - type: event
+    pattern: "file_create|file_modify"
+
+actions:
+  - type: suggest
+    message: |
+      # Estructura de Tests para Pulses
+
+      ## Organización de Archivos
+      1. Ubicación:
+         ```
+         tests/
+         └── pulses/
+             └── [nombre-del-pulse].test.ts
+         ```
+
+      2. Nomenclatura:
+         - Nombre del archivo: `[nombre-del-pulse].test.ts`
+         - Nombre del describe: `[NombrePulse] Pulse Tests`
+         - Nombres de tests: descriptivos y en inglés
+
+      ## Estructura Básica
+      ```typescript
+      import { test, expect } from '@playwright/test';
+      import { PulseType } from '../../src/lib/types/pulses/[pulse-type]';
+      
+      // Mock del Pulse para tests
+      const MockPulse = {
+        [PulseName]: async (payload: PulseType) => {
+          // Implementación del mock
+        }
+      };
+
+      test.describe('[PulseName] Pulse Tests', () => {
+        test('should [expected behavior]', async () => {
+          // Test implementation
+        });
+      });
+      ```
+
+      ## Tipos de Tests Requeridos
+
+      1. Test de Éxito:
+         ```typescript
+         test('should successfully process valid payload', async () => {
+           const payload = {
+             // Datos válidos
+           };
+           const result = await MockPulse.PulseName(payload);
+           expect(result.success).toBe(true);
+           expect(result.data).toBeDefined();
+         });
+         ```
+
+      2. Tests de Validación:
+         ```typescript
+         test('should handle invalid payload', async () => {
+           const invalidPayload = {
+             // Datos inválidos
+           };
+           const result = await MockPulse.PulseName(invalidPayload);
+           expect(result.success).toBe(false);
+           expect(result.error).toBeDefined();
+         });
+         ```
+
+      3. Tests de Campos Requeridos:
+         ```typescript
+         test('should handle missing required fields', async () => {
+           const incompletePayload = {
+             // Payload sin campos requeridos
+           };
+           const result = await MockPulse.PulseName(incompletePayload);
+           expect(result.success).toBe(false);
+           expect(result.error).toContain('required');
+         });
+         ```
+
+      4. Tests de Errores:
+         ```typescript
+         test('should handle server errors', async () => {
+           const errorPayload = {
+             // Payload válido con flag de error
+             _forceError: true
+           };
+           const result = await MockPulse.PulseName(errorPayload);
+           expect(result.success).toBe(false);
+           expect(result.error).toBeDefined();
+         });
+         ```
+
+      ## Mocking de Pulses
+
+      1. Estructura del Mock:
+         ```typescript
+         const MockPulse = {
+           PulseName: async (payload: any) => {
+             // 1. Validación de tipos
+             const validTypes = [...];
+             
+             // 2. Manejo de errores forzados
+             if (payload._forceError) {
+               return {
+                 success: false,
+                 error: 'Error interno del servidor'
+               };
+             }
+
+             // 3. Validación de campos requeridos
+             if (!payload.requiredField) {
+               return {
+                 success: false,
+                 error: 'Campo requerido faltante'
+               };
+             }
+
+             // 4. Validación de datos
+             if (!validTypes.includes(payload.type)) {
+               return {
+                 success: false,
+                 error: 'Tipo inválido'
+               };
+             }
+
+             // 5. Respuesta exitosa
+             return {
+               success: true,
+               data: {
+                 message: 'Operación exitosa',
+                 timestamp: new Date().toISOString()
+               }
+             };
+           }
+         };
+         ```
+
+      ## Mejores Prácticas
+
+      1. Aislamiento:
+         - Usar mocks en lugar de ClientPulse real
+         - Evitar dependencias de UI o navegador
+         - Simular respuestas del servidor
+
+      2. Cobertura:
+         - Probar todos los casos de éxito
+         - Probar todos los casos de error
+         - Probar validaciones de campos
+         - Probar tipos de datos inválidos
+
+      3. Mantenibilidad:
+         - Usar constantes para valores repetidos
+         - Documentar casos especiales
+         - Mantener tests atómicos
+         - Usar nombres descriptivos
+
+      4. Organización:
+         - Agrupar tests relacionados
+         - Separar configuración de tests
+         - Mantener mock simple y claro
+
+      ## Validaciones Comunes
+
+      1. Campos Requeridos:
+         ```typescript
+         if (!payload.field) {
+           return {
+             success: false,
+             error: 'field es requerido'
+           };
+         }
+         ```
+
+      2. Tipos de Datos:
+         ```typescript
+         if (typeof payload.field !== 'string') {
+           return {
+             success: false,
+             error: 'field debe ser string'
+           };
+         }
+         ```
+
+      3. Valores Enumerados:
+         ```typescript
+         if (!validValues.includes(payload.field)) {
+           return {
+             success: false,
+             error: 'valor no válido'
+           };
+         }
+         ```
+
+      ## Notas Adicionales
+      - Mantener consistencia en mensajes de error
+      - Documentar comportamientos especiales
+      - Actualizar tests al modificar pulses
+      - Considerar casos límite
+      - Mantener tests independientes
+
+examples:
+  - input: |
+      // Test sin estructura adecuada
+      test('test pulse', () => {
+        // código sin organización
+      });
+    output: |
+      // Test bien estructurado
+      test.describe('PulseName Pulse Tests', () => {
+        test('should handle valid payload', async () => {
+          const payload = { /* datos válidos */ };
+          const result = await MockPulse.PulseName(payload);
+          expect(result.success).toBe(true);
+        });
+      });
+
+metadata:
+  priority: high
+  version: 1.0
+  tags:
+    - testing
+    - pulses
+    - playwright
+</rule>

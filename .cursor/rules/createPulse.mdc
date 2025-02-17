@@ -1,0 +1,228 @@
+---
+description: Pulse Creation Rule
+globs: src/lib/types/pulses/**/*.ts
+---
+# Pulse Creation Rule
+
+Rules for creating new pulses in the application.
+
+<rule>
+name: pulse_creation_respect
+description: Standards for creating new pulses
+filters:
+  - type: file_extension
+    pattern: "\.ts$"
+  - type: path
+    pattern: "src/lib/types/pulses/"
+  - type: event
+    pattern: "file_create|file_modify"
+
+actions:
+  - type: suggest
+    message: |
+      # Estructura de un Pulse
+
+      ## 1. Ubicación y Nomenclatura
+      ```
+      src/lib/types/pulses/[nombre-del-pulse].ts
+      ```
+      - Usar snake_case para nombres de archivo
+      - Usar PascalCase para nombres de tipos y constantes
+      - Sufijo del archivo debe ser `.ts`
+
+      ## 2. Estructura Básica del Archivo
+      ```typescript
+      // 1. Definición del nombre del pulse
+      export const PULSE_NAME = 'NombrePulse' as const;
+
+      // 2. Interface del Payload
+      export interface NombrePulsePayload {
+        // Propiedades requeridas
+        propiedadRequerida: string;
+        // Propiedades opcionales
+        propiedadOpcional?: number;
+      }
+
+      // 3. Función de validación
+      export function validateNombrePulse(payload: any): {
+        isValid: boolean;
+        expectedType: string;
+        example: string;
+      } {
+        return {
+          isValid: typeof payload === 'object' && 
+                  payload !== null &&
+                  'propiedadRequerida' in payload &&
+                  typeof payload.propiedadRequerida === 'string',
+          expectedType: 'NombrePulsePayload',
+          example: `{
+            propiedadRequerida: "valor",
+            propiedadOpcional: 42
+          }`
+        };
+      }
+
+      // 4. Definición del Pulse
+      export const NombrePulse = {
+        type: PULSE_NAME,
+        handler: async (payload: NombrePulsePayload) => {
+          // Lógica del pulse
+          return {
+            success: true,
+            data: {
+              // Datos de respuesta
+            },
+            timestamp: new Date().toISOString()
+          };
+        },
+        validate: validateNombrePulse
+      };
+      ```
+
+      ## 3. Reglas de Implementación
+
+      ### 3.1 Nombres y Tipos
+      - Nombre del pulse debe ser descriptivo y en PascalCase
+      - Payload interface debe tener el sufijo `Payload`
+      - Función de validación debe tener el prefijo `validate`
+
+      ### 3.2 Payload
+      - Definir todas las propiedades requeridas sin `?`
+      - Propiedades opcionales deben usar `?`
+      - Usar tipos específicos (evitar `any`)
+      - Documentar propiedades complejas
+
+      ### 3.3 Validación
+      - Validar tipo de cada propiedad requerida
+      - Incluir ejemplo realista en `example`
+      - Validar formato/rango de valores si aplica
+      - Mensaje de error claro en caso de fallo
+
+      ### 3.4 Handler
+      - Debe ser async
+      - Manejar errores apropiadamente
+      - Retornar objeto con estructura consistente
+      - Incluir timestamp en respuesta
+
+      ## 4. Estructura de Respuesta
+      ```typescript
+      // Éxito
+      {
+        success: true,
+        data: {
+          // Datos específicos del pulse
+        },
+        timestamp: string
+      }
+
+      // Error
+      {
+        success: false,
+        error: string,
+        timestamp: string
+      }
+      ```
+
+      ## 5. Ejemplos
+
+      ### 5.1 Pulse Simple
+      ```typescript
+      export const PULSE_NAME = 'VerificarDato' as const;
+
+      export interface VerificarDatoPayload {
+        valor: string;
+      }
+
+      export function validateVerificarDato(payload: any) {
+        return {
+          isValid: typeof payload === 'object' && 
+                  payload !== null &&
+                  'valor' in payload &&
+                  typeof payload.valor === 'string',
+          expectedType: 'VerificarDatoPayload',
+          example: `{
+            valor: "test123"
+          }`
+        };
+      }
+
+      export const VerificarDato = {
+        type: PULSE_NAME,
+        handler: async (payload: VerificarDatoPayload) => {
+          const { valor } = payload;
+          return {
+            success: true,
+            data: {
+              esValido: valor.length >= 3,
+              mensaje: valor.length >= 3 ? 'Valor válido' : 'Valor muy corto'
+            },
+            timestamp: new Date().toISOString()
+          };
+        },
+        validate: validateVerificarDato
+      };
+      ```
+
+      ### 5.2 Pulse con Múltiples Campos
+      ```typescript
+      export const PULSE_NAME = 'ProcesarFormulario' as const;
+
+      export interface ProcesarFormularioPayload {
+        nombre: string;
+        edad: number;
+        email?: string;
+      }
+
+      export function validateProcesarFormulario(payload: any) {
+        return {
+          isValid: typeof payload === 'object' && 
+                  payload !== null &&
+                  'nombre' in payload &&
+                  typeof payload.nombre === 'string' &&
+                  'edad' in payload &&
+                  typeof payload.edad === 'number' &&
+                  (!('email' in payload) || typeof payload.email === 'string'),
+          expectedType: 'ProcesarFormularioPayload',
+          example: `{
+            nombre: "Juan",
+            edad: 25,
+            email: "juan@example.com"
+          }`
+        };
+      }
+
+      export const ProcesarFormulario = {
+        type: PULSE_NAME,
+        handler: async (payload: ProcesarFormularioPayload) => {
+          const { nombre, edad, email } = payload;
+          
+          if (edad < 18) {
+            return {
+              success: false,
+              error: 'Debe ser mayor de edad',
+              timestamp: new Date().toISOString()
+            };
+          }
+
+          return {
+            success: true,
+            data: {
+              id: Date.now().toString(),
+              nombreCompleto: nombre.trim(),
+              contacto: email || 'No proporcionado'
+            },
+            timestamp: new Date().toISOString()
+          };
+        },
+        validate: validateProcesarFormulario
+      };
+      ```
+
+metadata:
+  priority: high
+  version: 1.0
+  tags:
+    - pulses
+    - typescript
+    - validation
+</rule>

@@ -1,6 +1,7 @@
 <script>
     import { Icon, Photo, H2, H3, User } from "svelte-hero-icons";
     import { onMount } from 'svelte';
+    import { Pulse as ClientPulse } from '$lib/clientPulses';
     let showModal = false;
     let selectedImages = [];
     let selectedh1 = '';
@@ -89,23 +90,26 @@
 
     onMount(async () => {
         try {
-            const response = await fetch('/api/images');
-            const data = await response.json();
-            allImages = data.images;
-            console.log('Archivos disponibles:', allImages); // Debug
+            const result = await ClientPulse.ImageList({});
+            if (result.success && result.data) {
+                allImages = result.data.images;
+                console.log('Archivos disponibles:', allImages); // Debug
 
-            // Buscar logo y favicon
-            const logoFile = allImages.find(img => img.startsWith('logo.'));
-            const faviconFile = allImages.find(img => img.startsWith('favicon.'));
-            
-            if (logoFile) {
-                console.log('Logo encontrado:', logoFile);
-                profileImage = logoFile;
-            }
-            
-            if (faviconFile) {
-                console.log('Favicon encontrado:', faviconFile);
-                hasFavicon = true;
+                // Buscar logo y favicon
+                const logoFile = allImages.find(img => img.startsWith('logo.'));
+                const faviconFile = allImages.find(img => img.startsWith('favicon.'));
+                
+                if (logoFile) {
+                    console.log('Logo encontrado:', logoFile);
+                    profileImage = logoFile;
+                }
+                
+                if (faviconFile) {
+                    console.log('Favicon encontrado:', faviconFile);
+                    hasFavicon = true;
+                }
+            } else {
+                console.error('Error al obtener imágenes:', result.error);
             }
         } catch (error) {
             console.error('Error fetching images:', error);
@@ -124,30 +128,22 @@
         }
 
         try {
-            const response = await fetch('/api/rename', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    oldName: imageName,
-                    newName: newFileName
-                })
+            const result = await ClientPulse.RenameImage({
+                oldName: imageName,
+                newName: newFileName
             });
 
-            const data = await response.json();
-
-            if (response.ok) {
+            if (result.success && result.data) {
                 // Actualizar la lista de imágenes
                 const index = allImages.indexOf(imageName);
                 if (index !== -1) {
-                    allImages[index] = data.newName;
+                    allImages[index] = result.data.newName;
                     allImages = [...allImages]; // Forzar actualización
                 }
                 editingImage = null;
                 errorMessage = '';
             } else {
-                errorMessage = data.error;
+                errorMessage = result.error || 'Error al renombrar el archivo';
             }
         } catch (error) {
             errorMessage = 'Error al renombrar el archivo';
@@ -219,17 +215,11 @@
         }
 
         try {
-            const response = await fetch('/api/delete', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ filename: imageName })
+            const result = await ClientPulse.DeleteImage({
+                filename: imageName
             });
 
-            const data = await response.json();
-
-            if (response.ok) {
+            if (result.success && result.data) {
                 // Eliminar la imagen de la lista
                 allImages = allImages.filter(img => img !== imageName);
                 
@@ -257,18 +247,11 @@
                         delete item.image;
                     }
                 });
-
-                // Forzar actualización
-                buildings = buildings;
-                systems = systems;
-                manuals = manuals;
-                
-                errorMessage = '';
             } else {
-                errorMessage = data.error;
+                errorMessage = result.error || 'Error al eliminar la imagen';
             }
         } catch (error) {
-            errorMessage = 'Error al eliminar el archivo';
+            errorMessage = 'Error al eliminar la imagen';
             console.error('Error:', error);
         }
     }
