@@ -35,4 +35,8 @@ export const ImageList = {
     }
   },
   validate: validateImageList
+<<<<<<< HEAD
 }; 
+=======
+};
+>>>>>>> 18d591754fd2f768b27986d0d3d566b73edc10a1
