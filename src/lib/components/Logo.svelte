@@ -3,9 +3,9 @@
 </script>
 
 <img 
-  src="/logo_ac_ing.svg" 
+  src="/logo-favicon.svg" 
   alt="AC Proyectos y Asesorías" 
-  class="w-full transition-all duration-300 {inverted ? 'logo-inverted' : ''}"
+  class="w-full transition-all duration-300"
 />
 
 <style>

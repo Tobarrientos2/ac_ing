@@ -164,10 +164,8 @@
   </script>
   
   <div bind:this={container} class="viewer-container">
-    <div class="quote-container">
-      <blockquote class="quote-text">
-        Con un enfoque constante en la innovación, economía y seguridad estructural, nos destacamos por la capacidad de ofrecer diseños eficientes y de alta calidad.
-      </blockquote>
+    <div class="logo-container">
+      <img src="/logo.svg" alt="Logo" class="logo">
     </div>
   </div>
   
@@ -178,49 +176,23 @@
       position: relative;
     }
 
-    .quote-container {
+    .logo-container {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 60%;
-      max-width: 600px;
-      padding: 1rem;
-      text-align: center;
-      color: #000;
       z-index: 10;
       pointer-events: none;
     }
 
-    .quote-text {
-      font-family: TiemposFine, -apple-system, system-ui, 'avenir next', avenir, 'segoe ui', 'helvetica neue', helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
-      font-weight: 200;
-      font-size: clamp(1.5rem, 4vw, 2.2rem);
-      line-height: 1.5;
-      margin-bottom: 2rem;
+    .logo {
+      width: 400px;
+      height: 400px;
+      max-width: 600px;
+      max-height: 600px;
       opacity: 0;
       animation: fadeIn 2s ease-in forwards;
       animation-delay: 1s;
-      white-space: normal;
-      word-wrap: break-word;
-      hyphens: auto;
-    }
-
-    .quote-author {
-      font-size: clamp(0.8rem, 3vw, 1rem);
-      opacity: 0;
-      animation: fadeIn 2s ease-in forwards;
-      animation-delay: 2s;
-    }
-
-    .quote-author p {
-      margin: 0.2rem 0;
-      white-space: normal;
-      word-wrap: break-word;
-    }
-
-    .quote-author p:first-child {
-      font-weight: bold;
     }
 
     @keyframes fadeIn {
@@ -235,6 +207,25 @@
     @media (max-width: 768px) {
       .quote-container {
         padding: 0.5rem;
+      }
+
+      .logo {
+        width: 250px;
+        height: 250px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .logo {
+        width: 200px;
+        height: 200px;
+      }
+    }
+
+    @media (max-width: 320px) {
+      .logo {
+        width: 150px;
+        height: 150px;
       }
     }
   </style>
