@@ -32,19 +32,6 @@
       fadePlane.lookAt(camera.position);
       scene.add(fadePlane);
 
-      // Crear un plano oscuro para el overlay
-      const overlayGeometry = new THREE.PlaneGeometry(100000, 100000);
-      const overlayMaterial = new THREE.MeshBasicMaterial({
-        color: 0x000000,
-        transparent: true,
-        opacity: 0.7,
-        side: THREE.DoubleSide
-      });
-      const overlayPlane = new THREE.Mesh(overlayGeometry, overlayMaterial);
-      overlayPlane.position.set(0, 0, -100); // Colocamos el overlay detrás del modelo
-      overlayPlane.lookAt(camera.position);
-      scene.add(overlayPlane);
-
       renderer.setSize(window.innerWidth, window.innerHeight);
       container.appendChild(renderer.domElement);
   
@@ -127,56 +114,33 @@
         }
       );
   
-      // Añadir estas variables para controlar la rotación de la cámara
-      let lastUpdateTime = 0;
-      const UPDATE_INTERVAL = 5000; // 5 segundos en milisegundos
-      
-      // Función para generar una posición aleatoria de cámara
-      function getRandomCameraPosition() {
-        const radius = 1000; // Radio constante
-        const theta = Math.random() * Math.PI * 2; // Ángulo horizontal completo (0 a 2π)
-        
-        // Limitamos el ángulo vertical (phi) a un rango más controlado
-        // Por ejemplo, entre π/6 (30°) y π/3 (60°) para mantener una vista más centrada
-        const minPhi = Math.PI / 6;
-        const maxPhi = Math.PI / 3;
-        const phi = minPhi + (Math.random() * (maxPhi - minPhi));
-        
-        return {
-          x: radius * Math.sin(phi) * Math.cos(theta),
-          y: -radius * Math.sin(phi) * Math.sin(theta),
-          z: radius * Math.cos(phi)
-        };
-      }
+      // Función de animación
+      let targetY = -20; // Posición final deseada
+      let currentY = -1000; // Posición inicial más cercana
+      let animationSpeed = 1.5; // Ajustamos la velocidad para la nueva distancia
+      let fadeStartY = -200; // Posición donde comenzará el fade
+      let fadeOpacity = 0;
 
       function animate() {
         requestAnimationFrame(animate);
 
-        const currentTime = Date.now();
-        
-        // Verificar si han pasado 5 segundos desde la última actualización
-        if (currentTime - lastUpdateTime > UPDATE_INTERVAL) {
-          const newPosition = getRandomCameraPosition();
-          
-          // Actualizar posición de la cámara
-          camera.position.set(newPosition.x, newPosition.y, newPosition.z);
+        // Animar el acercamiento de la cámara
+        if (currentY < targetY) {
+          currentY += animationSpeed;
+          camera.position.setY(currentY);
           camera.lookAt(0, 0, 0);
-          camera.up.set(0, 0, 1); // Mantener la orientación "arriba"
-          
-          lastUpdateTime = currentTime;
         }
 
-        // Actualizar la opacidad del overlay
-        const progress = Math.max(0, 1 - (Math.abs(camera.position.y) - Math.abs(0)) / 1000);
-        overlayMaterial.opacity = 0.7 * (1 - progress); // Desvanecer desde 0.7 a 0
-
-        // El resto del código del fade permanece igual
-        if (camera.position.y >= -1000 && camera.position.y <= 0) {
-          fadeMaterial.opacity = 1;
+        // Animar el fade a blanco cuando la cámara pase cierto punto
+        if (currentY >= fadeStartY && fadeOpacity < 1) {
+          // Calculamos la opacidad basada en la distancia entre fadeStartY y targetY
+          fadeOpacity = (currentY - fadeStartY) / (targetY - fadeStartY);
+          // Aseguramos que la opacidad no exceda 1
+          fadeOpacity = Math.min(fadeOpacity, 1);
+          fadeMaterial.opacity = fadeOpacity;
           fadePlane.lookAt(camera.position);
         }
 
-        overlayPlane.lookAt(camera.position);
         renderer.render(scene, camera);
       }
       
@@ -200,93 +164,35 @@
   </script>
   
   <div bind:this={container} class="viewer-container">
-    <div class="quote-container">
-      <blockquote class="quote-text">
-        Con un enfoque constante en la innovación, economía y seguridad estructural, nos destacamos por la capacidad de ofrecer diseños eficientes y de alta calidad.
-      </blockquote>
+    <div class="logo-container">
+      <img src="/logo.svg" alt="Logo" class="logo">
     </div>
   </div>
   
   <style>
-    @font-face {
-      font-family: 'Calibri';
-      src: url('/fonts/calibri-regular.ttf') format('truetype');
-      font-weight: normal;
-      font-style: normal;
-    }
-
-    @font-face {
-      font-family: 'Calibri';
-      src: url('/fonts/calibri-bold.ttf') format('truetype');
-      font-weight: bold;
-      font-style: normal;
-    }
-
-    @font-face {
-      font-family: 'Calibri';
-      src: url('/fonts/calibri-italic.ttf') format('truetype');
-      font-weight: normal;
-      font-style: italic;
-    }
-
-    @font-face {
-      font-family: 'Calibri';
-      src: url('/fonts/calibri-bold-italic.ttf') format('truetype');
-      font-weight: bold;
-      font-style: italic;
-    }
-
     .viewer-container {
       width: 100%;
       height: 100vh;
       position: relative;
     }
 
-    .quote-container {
+    .logo-container {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 60%;
-      max-width: 600px;
-      padding: 1rem;
-      text-align: center;
-      color: #000;
       z-index: 10;
       pointer-events: none;
     }
 
-    .quote-text {
-      font-family: 'Calibri', sans-serif;
-      font-weight: 200;
-      font-size: clamp(1.5rem, 4vw, 2.2rem);
-      line-height: 1.5;
-      margin-bottom: 2rem;
+    .logo {
+      width: 400px;
+      height: 400px;
+      max-width: 600px;
+      max-height: 600px;
       opacity: 0;
       animation: fadeIn 2s ease-in forwards;
       animation-delay: 1s;
-      white-space: normal;
-      word-wrap: break-word;
-      hyphens: auto;
-      color: #ffffff;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    }
-
-    .quote-author {
-      font-size: clamp(0.8rem, 3vw, 1rem);
-      opacity: 0;
-      animation: fadeIn 2s ease-in forwards;
-      animation-delay: 2s;
-    }
-
-    .quote-author p {
-      margin: 0.2rem 0;
-      white-space: normal;
-      word-wrap: break-word;
-    }
-
-    .quote-author p:first-child {
-      font-weight: bold;
     }
 
     @keyframes fadeIn {
@@ -301,6 +207,25 @@
     @media (max-width: 768px) {
       .quote-container {
         padding: 0.5rem;
+      }
+
+      .logo {
+        width: 250px;
+        height: 250px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .logo {
+        width: 200px;
+        height: 200px;
+      }
+    }
+
+    @media (max-width: 320px) {
+      .logo {
+        width: 150px;
+        height: 150px;
       }
     }
   </style>

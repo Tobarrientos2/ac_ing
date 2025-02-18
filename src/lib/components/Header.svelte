@@ -1,9 +1,10 @@
 <script>
   import { onMount } from 'svelte';
-  import { fly } from 'svelte/transition';
+  // import { fly } from 'svelte/transition';  // Comentado temporalmente
   import Logo from './Logo.svelte';
   import { activeTheme } from '../config/themes';
 
+  /* Comentado temporalmente
   let isMenuOpen = false;
 
   const toggleMenu = () => {
@@ -21,6 +22,7 @@
       document.body.classList.toggle('no-scroll', isMenuOpen);
     }
   }
+  */
 
   onMount(() => {
     const header = document.querySelector('header');
@@ -49,43 +51,41 @@
   });
 </script>
 
-<header class="fixed top-0 left-0 right-0 z-50">
-  <nav class="px-6 py-6 flex justify-between items-center relative">
-    <a href="/" class="absolute left-1/2 -translate-x-1/2 z-50">
-      <div class="w-[60px] opacity-90 hover:opacity-100 transition-opacity duration-300"> 
-        <Logo inverted={$activeTheme.name !== 'Light Theme'} />
+<header class="fixed top-2 left-12 right-12 z-50">
+  <nav class="px-6 py-2 flex justify-center items-center relative">
+    <a href="/" class="z-50">
+      <div class="w-[100px] opacity-90 hover:opacity-100 transition-opacity duration-300"> 
+        <Logo />
       </div>
     </a>
+    <!-- Comentado temporalmente
     <div class="ml-auto">
       <button
-        class="z-50 w-12 h-12 flex flex-col justify-center items-center relative"
+        class="z-50 w-12 h-12 flex flex-col justify-center items-center relative cursor-pointer"
         on:click={toggleMenu}
         aria-label="Toggle menu"
       >
-        <div class="w-8 h-8 relative">
-          <span 
-            class="w-8 h-[2px] absolute top-1/2 left-0 transition-all duration-300 ease-in-out"
-            class:bg-white={$activeTheme.name !== 'Light Theme'}
-            class:bg-zinc-900={$activeTheme.name === 'Light Theme'}
-            style={isMenuOpen ? 'transform: translateY(-50%) rotate(45deg)' : 'transform: translateY(-10px)'}
-          ></span>
-          <span 
-            class="w-8 h-[2px] absolute top-1/2 left-0 transition-all duration-300 ease-in-out"
-            class:bg-white={$activeTheme.name !== 'Light Theme'}
-            class:bg-zinc-900={$activeTheme.name === 'Light Theme'}
-            class:opacity-0={isMenuOpen}
-            style="transform: translateY(-50%)"
-          ></span>
-          <span 
-            class="w-8 h-[2px] absolute top-1/2 left-0 transition-all duration-300 ease-in-out"
-            class:bg-white={$activeTheme.name !== 'Light Theme'}
-            class:bg-zinc-900={$activeTheme.name === 'Light Theme'}
-            style={isMenuOpen ? 'transform: translateY(-50%) rotate(-45deg)' : 'transform: translateY(8px)'}
-          ></span>
+        <div class="flex flex-col justify-center items-center w-12 h-12 relative">
+          <div class="flex flex-col justify-start items-center">
+            <span 
+              class="w-6 h-[2px] bg-zinc-900 transform -translate-x-[5px] transition-all duration-300"
+              style={isMenuOpen ? 'transform: translateX(-5px) rotate(45deg) translateY(6px)' : ''}
+            ></span>
+            <span 
+              class="w-6 h-[2px] bg-zinc-900 my-[6px] flex justify-center items-center relative transition-all duration-300"
+              class:opacity-0={isMenuOpen}
+            ></span>
+            <span 
+              class="w-6 h-[2px] bg-zinc-900 transform -translate-x-[5px] transition-all duration-300"
+              style={isMenuOpen ? 'transform: translateX(-5px) rotate(-45deg) translateY(-6px)' : ''}
+            ></span>
+          </div>
         </div>
       </button>
     </div>
+    -->
   </nav>
+  <!-- Comentado temporalmente
   {#if isMenuOpen}
     <div
       class="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center"
@@ -111,18 +111,29 @@
       </ul>
     </div>
   {/if}
+  -->
 </header>
 
 <style>
   header {
     background: transparent;
-    transition: background-color 0.5s ease;
   }
   :global(header.scrolled) {
-    background-color: var(--header-background);
-    backdrop-filter: blur(var(--header-blur));
+    background: transparent;
+    backdrop-filter: none;
   }
   a::after {
     background-color: var(--accent-color);
+  }
+
+  @media (max-width: 768px) {
+    header {
+      left: 0;
+      right: 0;
+    }
+    nav {
+      padding-left: 0;
+      padding-right: 0;
+    }
   }
 </style>

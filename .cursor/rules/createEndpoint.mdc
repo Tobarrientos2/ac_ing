@@ -1,0 +1,185 @@
+---
+description: 
+globs: 
+---
+ ---
+description: Endpoint Creation Rule for File System Operations
+globs: src/routes/api/**/**/+server.ts
+---
+# Endpoint Creation Rule
+
+Reglas para la creación de endpoints para pulses que requieren acceso al sistema de archivos.
+
+<rule>
+name: endpoint_creation_respect
+description: Estándares para crear endpoints de pulses con operaciones de sistema de archivos
+filters:
+  - type: file_extension
+    pattern: "\.ts$"
+  - type: path
+    pattern: "src/routes/api/"
+
+actions:
+  - type: suggest
+    message: |
+      # Creación de Endpoints para Pulses
+
+      ## 1. Cuándo Crear un Endpoint
+
+      ### 1.1 Criterios CRÍTICOS
+      Se debe crear un endpoint **ÚNICAMENTE** cuando el pulse:
+      - Utiliza `fs` (File System)
+      - Utiliza `path`
+      - Requiere acceso directo al sistema de archivos
+      - Necesita realizar operaciones de I/O a nivel de sistema
+
+      ### 1.2 Ejemplos de Casos que Requieren Endpoint
+      ```typescript
+      // Pulse que requiere endpoint
+      import { fs } from 'fs-extra';
+      import { path } from 'path';
+
+      export const ImageDelete = {
+        handler: async (payload) => {
+          // Operaciones con fs/path
+        }
+      };
+      ```
+
+      ## 2. Estructura y Ubicación
+
+      ### 2.1 Convención de Nombres y Rutas
+      La ruta del endpoint DEBE seguir la estructura del nombre del pulse:
+      ```
+      [Entidad][Acción] (nombre del pulse) -> /api/[entidad]/[acción]/+server.ts
+      ```
+
+      Ejemplos:
+      - `ImageDelete` -> `/api/images/delete/+server.ts`
+      - `FileUpload` -> `/api/files/upload/+server.ts`
+      - `DocumentRead` -> `/api/documents/read/+server.ts`
+
+      ### 2.2 Estructura del Directorio
+      ```
+      src/routes/api/
+        └── [entidad]/
+            └── [acción]/
+                └── +server.ts
+      ```
+
+      ## 3. Implementación del Endpoint
+
+      ### 3.1 Estructura Básica
+      ```typescript
+      import { json } from '@sveltejs/kit';
+      import type { RequestHandler } from './$types';
+      import { fs } from 'fs-extra';
+      import { path } from 'path';
+
+      export const POST: RequestHandler = async ({ request }) => {
+        try {
+          const { pulse, payload } = await request.json();
+          
+          // Implementar lógica específica del pulse
+          // Usar fs, path u otras operaciones de sistema
+
+          return json({
+            success: true,
+            data: {
+              // Resultado de la operación
+            }
+          });
+        } catch (error) {
+          return json({
+            success: false,
+            error: error instanceof Error ? error.message : 'Error desconocido'
+          }, { status: 500 });
+        }
+      };
+      ```
+
+      ### 3.2 Manejo de Errores
+      - Capturar y manejar errores de sistema de archivos
+      - Retornar códigos HTTP apropiados
+      - Mantener consistencia con la estructura de respuesta del pulse
+
+      ## 4. Seguridad
+
+      ### 4.1 Validaciones Críticas
+      - Validar rutas de archivo antes de operaciones
+      - Prevenir path traversal
+      - Verificar permisos de archivo/directorio
+      - Sanitizar nombres de archivo
+
+      ### 4.2 Ejemplo de Validaciones
+      ```typescript
+      import { resolve, isAbsolute, normalize } from 'path';
+
+      function validateFilePath(filePath: string): boolean {
+        const normalizedPath = normalize(filePath);
+        if (isAbsolute(normalizedPath)) {
+          return false; // Rechazar rutas absolutas
+        }
+        
+        const resolvedPath = resolve(process.cwd(), normalizedPath);
+        const basePath = resolve(process.cwd(), 'uploads');
+        
+        return resolvedPath.startsWith(basePath);
+      }
+      ```
+
+      ## 5. Ejemplo Completo
+
+      ### 5.1 Endpoint para ImageDelete
+      ```typescript
+      // src/routes/api/images/delete/+server.ts
+      import { json } from '@sveltejs/kit';
+      import type { RequestHandler } from './$types';
+      import { fs } from 'fs-extra';
+      import { resolve, normalize } from 'path';
+
+      export const POST: RequestHandler = async ({ request }) => {
+        try {
+          const { pulse, payload } = await request.json();
+          const { filename } = payload;
+
+          // Validar ruta
+          const normalizedPath = normalize(filename);
+          const fullPath = resolve(process.cwd(), 'uploads/images', normalizedPath);
+          
+          if (!fullPath.startsWith(resolve(process.cwd(), 'uploads/images'))) {
+            throw new Error('Ruta de archivo inválida');
+          }
+
+          // Verificar existencia
+          if (!await fs.pathExists(fullPath)) {
+            throw new Error('Archivo no encontrado');
+          }
+
+          // Eliminar archivo
+          await fs.remove(fullPath);
+
+          return json({
+            success: true,
+            data: {
+              deleted: filename,
+              timestamp: new Date().toISOString()
+            }
+          });
+        } catch (error) {
+          return json({
+            success: false,
+            error: error instanceof Error ? error.message : 'Error desconocido'
+          }, { status: 500 });
+        }
+      };
+      ```
+
+metadata:
+  priority: critical
+  version: 1.0
+  tags:
+    - endpoints
+    - filesystem
+    - security
+    - api

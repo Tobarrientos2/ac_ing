@@ -133,11 +133,15 @@ actions:
       CUANDO el usuario solicite "crear un pulse":
 
       1. Leer `createPulse.mdc`
-      2. Crear el pulse
-      3. Leer `createTestForPulse.mdc`
-      4. Crear los tests
-      5. Leer `runCreatedTest.mdc`
-      6. Ejecutar y verificar tests
+     2. Crear el pulse siguiendo la convención [Entidad][Acción]
+      3. Verificar si requiere endpoint (según regla 0.5)
+      4. Si requiere endpoint:
+         - Leer `createEndpoint.mdc`
+         - Crear el endpoint correspondiente
+      5. Leer `createTestForPulse.mdc`
+      6. Crear los tests
+      7. Leer `runCreatedTest.mdc`
+      8. Ejecutar y verificar tests
 
       ## 4. Implementación de Pulses en Componentes
 
@@ -226,78 +230,135 @@ actions:
       8. `workflowAI.mdc`: Flujo general de trabajo
 
       ### 0.3 Verificación OBLIGATORIA de Estado Actual
-- **CRÍTICO**: La IA DEBE verificar el estado actual ANTES de CUALQUIER acción que:
-  1. Modifique archivos
-  2. Documente cambios
-  3. Genere commits/issues
+      - **CRÍTICO**: La IA DEBE verificar el estado actual ANTES de CUALQUIER acción que:
+        1. Modifique archivos
+        2. Documente cambios
+        3. Genere commits/issues
 
-- **Proceso de Verificación**:
-  ```typescript
-  // Ejemplo de verificación sistemática
-  async function verificarEstadoActual(archivos: string[]) {
-    const estadoActual = {};
-    for (const archivo of archivos) {
-      const contenido = await read_file({
-        relative_workspace_path: archivo,
-        should_read_entire_file: true
-      });
-      estadoActual[archivo] = contenido;
-    }
-    return estadoActual;
-  }
-  ```
+      - **Proceso de Verificación**:
+        ```typescript
+        // Ejemplo de verificación sistemática
+        async function verificarEstadoActual(archivos: string[]) {
+          const estadoActual = {};
+          for (const archivo of archivos) {
+            const contenido = await read_file({
+              relative_workspace_path: archivo,
+              should_read_entire_file: true
+            });
+            estadoActual[archivo] = contenido;
+          }
+          return estadoActual;
+        }
+        ```
 
-- **Reglas de Verificación**:
-  * NUNCA asumir estado basado en el historial de la conversación
-  * SIEMPRE leer el estado actual antes de:
-    - Crear un issue
-    - Hacer commit/push
-    - Sugerir cambios adicionales
-  * SIEMPRE informar discrepancias al usuario
-  * SIEMPRE usar la información más reciente
+      - **Reglas de Verificación**:
+        * NUNCA asumir estado basado en el historial de la conversación
+        * SIEMPRE leer el estado actual antes de:
+          - Crear un issue
+          - Hacer commit/push
+          - Sugerir cambios adicionales
+        * SIEMPRE informar discrepancias al usuario
+        * SIEMPRE usar la información más reciente
 
-- **Comportamiento por Etapa**:
-  1. **Antes de Crear Issue**:
-     - Verificar estado actual de TODOS los archivos relevantes
-     - Documentar solo los cambios confirmados
-     - Esta verificación servirá también para el commit posterior
+      - **Comportamiento por Etapa**:
+        1. **Antes de Crear Issue**:
+           - Verificar estado actual de TODOS los archivos relevantes
+           - Documentar solo los cambios confirmados
+           - Esta verificación servirá también para el commit posterior
 
-  2. **Antes de Commit/Push**:
-     - NO es necesario verificar nuevamente si ya se verificó para el issue
-     - Usar la información de la última verificación
-     - Solo verificar nuevamente si el usuario indica cambios adicionales
+        2. **Antes de Commit/Push**:
+           - NO es necesario verificar nuevamente si ya se verificó para el issue
+           - Usar la información de la última verificación
+           - Solo verificar nuevamente si el usuario indica cambios adicionales
 
-  3. **Antes de Sugerir Cambios**:
-     - Verificar estado actual
-     - Comparar con el estado esperado
-     - Informar discrepancias
+        3. **Antes de Sugerir Cambios**:
+           - Verificar estado actual
+           - Comparar con el estado esperado
+           - Informar discrepancias
 
-- **Ejemplos de Uso**:
-  ```typescript
-  // Antes de crear issue
-  const estadoActual = await verificarEstadoActual([
-    'src/lib/components/Component.svelte',
-    'src/lib/types/types.ts'
-  ]);
-  // Este estado servirá tanto para el issue como para el commit
+      - **Ejemplos de Uso**:
+        ```typescript
+        // Antes de crear issue
+        const estadoActual = await verificarEstadoActual([
+          'src/lib/components/Component.svelte',
+          'src/lib/types/types.ts'
+        ]);
+        // Este estado servirá tanto para el issue como para el commit
 
-  // Si el usuario indica cambios adicionales
-  const nuevoEstado = await verificarEstadoActual([
-    'src/lib/components/Component.svelte'
-  ]);
-  // Verificar solo lo necesario
-  ```
+        // Si el usuario indica cambios adicionales
+        const nuevoEstado = await verificarEstadoActual([
+          'src/lib/components/Component.svelte'
+        ]);
+        // Verificar solo lo necesario
+        ```
 
-- **Manejo de Errores**:
-  * Si no se puede verificar → DETENER y notificar al usuario
-  * Si hay discrepancias → DETENER y solicitar clarificación
-  * Si hay archivos faltantes → DETENER y reportar
+      - **Manejo de Errores**:
+        * Si no se puede verificar → DETENER y notificar al usuario
+        * Si hay discrepancias → DETENER y solicitar clarificación
+        * Si hay archivos faltantes → DETENER y reportar
 
-- **Beneficios**:
-  * Evita documentación incorrecta
-  * Previene commits basados en suposiciones
-  * Mantiene sincronización con el estado real
-  * Reduce errores de comunicación
+      - **Beneficios**:
+        * Evita documentación incorrecta
+        * Previene commits basados en suposiciones
+        * Mantiene sincronización con el estado real
+        * Reduce errores de comunicación
+
+      ### 0.4 Verificación y Creación de ClientPulses
+      - **CRÍTICO**: La IA DEBE verificar la existencia de `clientPulses.ts` cuando:
+        1. Se implementen pulses en componentes
+        2. Se detecten importaciones de `$lib/clientPulses`
+        3. Se encuentren errores de módulo no encontrado
+
+      - **Proceso de Verificación**:
+        ```typescript
+        // Verificar existencia del archivo
+        const clientPulsesExists = await read_file({
+          relative_workspace_path: "src/lib/clientPulses.ts",
+          should_read_entire_file: true
+        });
+
+        if (!clientPulsesExists) {
+          // Leer y aplicar createClientPulsesFile.mdc
+          await fetch_rules(["createClientPulsesFile"]);
+        }
+        ```
+
+      - **Reglas de Verificación**:
+        * SIEMPRE verificar antes de implementar pulses
+        * Si no existe, DETENER y crear usando `createClientPulsesFile.mdc`
+        * NUNCA asumir su existencia basado en el historial
+
+      ### 0.5 Creación de Endpoints para Pulses
+      - **CRÍTICO**: La IA DEBE verificar si un pulse requiere endpoint basado en sus importaciones
+      
+      #### Cuándo Crear un Endpoint
+      Se debe crear un endpoint **ÚNICAMENTE** cuando el pulse:
+      - Utiliza `fs` (File System)
+      - Utiliza `path`
+      - Requiere acceso directo al sistema de archivos
+      - Necesita realizar operaciones de I/O a nivel de sistema
+
+      #### Proceso de Verificación y Creación
+      1. Al crear un nuevo pulse, verificar sus importaciones:
+         ```typescript
+         // Si el pulse tiene alguna de estas importaciones, REQUIERE endpoint
+         import { fs } from 'fs-extra';
+         import { path } from 'path';
+         import * as fs from 'fs';
+         // etc...
+         ```
+
+      2. Si requiere endpoint:
+         - Leer `createEndpoint.mdc`
+         - Crear el endpoint siguiendo la estructura:
+           ```
+           /api/[entidad]/[acción]/+server.ts
+           ```
+         - Implementar las validaciones de seguridad necesarias
+
+      3. Si NO requiere endpoint:
+         - NO crear archivo en `/api`
+         - El pulse se comunicará directamente con el backend existente
 
   ### 0.4 Verificación y Creación de ClientPulses
 - **CRÍTICO**: La IA DEBE verificar la existencia de `clientPulses.ts` cuando:

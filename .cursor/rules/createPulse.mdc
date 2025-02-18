@@ -26,9 +26,50 @@ actions:
       ```
       src/lib/types/pulses/[nombre-del-pulse].ts
       ```
-      - Usar snake_case para nombres de archivo
-      - Usar PascalCase para nombres de tipos y constantes
-      - Sufijo del archivo debe ser `.ts`
+       ### 1.1 Convenciones de Nombres CRÍTICAS
+      - El nombre del pulse debe seguir el patrón: `[Entidad][Acción]`
+        * Entidad: El recurso principal (ej: Image, User, Building)
+        * Acción: La operación a realizar (ej: List, Delete, Update)
+        
+      Ejemplos correctos:
+      - `ImageList` -> `src/lib/types/pulses/image_list.ts` -> `/api/images/list/+server.ts`
+      - `UserCreate` -> `src/lib/types/pulses/user_create.ts` -> `/api/users/create/+server.ts`
+      - `BuildingUpdate` -> `src/lib/types/pulses/building_update.ts` -> `/api/buildings/update/+server.ts`
+
+      Ejemplos incorrectos:
+      - ❌ `ListImages` (debería ser `ImageList`)
+      - ❌ `CreateUser` (debería ser `UserCreate`)
+      - ❌ `UpdateBuilding` (debería ser `BuildingUpdate`)
+
+      ### 1.2 Razones para esta Convención
+      1. **Importación Dinámica**: `clientPulses.ts` importa los pulses basado en su nombre:
+         ```typescript
+         // Si el pulse se llama ImageList
+         const pulseFileName = getPulseFileName('ImageList'); // -> 'image_list'
+         await import(`/src/lib/types/pulses/${pulseFileName}.ts`);
+         ```
+
+      2. **Estructura de API**: Los endpoints se crean siguiendo la misma convención:
+         ```
+         /api/[entidad]/[acción]/+server.ts
+         ```
+         Esto mantiene una estructura coherente y predecible.
+
+      3. **Organización de Recursos**: Agrupa las operaciones por entidad en lugar de por acción:
+         ```
+         /api/images/
+           ├── list/
+           ├── delete/
+           └── update/
+         ```
+         En lugar de:
+         ```
+         /api/list/
+           ├── images/
+           ├── users/
+           └── buildings/
+         ```
+
 
       ## 2. Estructura Básica del Archivo
       ```typescript
@@ -220,9 +261,10 @@ actions:
 
 metadata:
   priority: high
-  version: 1.0
+  version: 1.1
   tags:
     - pulses
     - typescript
     - validation
+    - naming-convention
 </rule>

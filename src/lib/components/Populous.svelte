@@ -98,7 +98,7 @@
     <!-- Hero Section -->
     <div class="max-w-[1400px] mx-auto py-16 px-8">
       <p class="text-[2.75rem] leading-[1.15] font-light tracking-tight max-w-2xl">
-        We're a global design firm with colleagues spanning four continents creating experiences that amplify the joy felt in shared human moments.
+        Con un enfoque constante en la innovación, economía y seguridad estructural, nos destacamos por la capacidad de ofrecer diseños eficientes y de alta calidad.
       </p>
     </div>
 

@@ -24,24 +24,24 @@
 </svelte:head>
 
 <div class="relative z-30 w-full min-h-screen bg-[#ffffff] flex items-center">
-  <div class="container mx-auto px-4 py-24 flex max-w-6xl">
+  <div class="container mx-auto px-4 py-12 md:py-24 flex flex-col md:flex-row max-w-6xl">
     {#if visible}
       <h2 
-        class="text-[2rem] font-normal w-1/4 -ml-16"
+        class="text-[1.75rem] md:text-[2rem] font-normal w-full md:w-1/4 mb-8 md:mb-0 md:-ml-16"
         transition:fly={{ y: 50, duration: 800, delay: 200, easing: cubicOut }}
       >
         Servicios
       </h2>
       
-      <div class="space-y-0 w-3/4 pl-[18rem]">
+      <div class="space-y-0 w-full md:w-3/4 md:pl-[18rem]">
         {#each services as service, i}
           <div 
             class="group border-t border-black/10 relative"
             transition:fly={{ y: 50, duration: 800, delay: 300 + (i * 100), easing: cubicOut }}
           >
-            <div class="text-[2rem] leading-tight transition-all cursor-pointer py-3">
+            <div class="text-[1.5rem] md:text-[2rem] leading-tight transition-all cursor-pointer py-3">
               <span class="group-hover:text-[#FF4D00] inline-flex items-center">
-                <span class="material-symbols-outlined absolute left-[-2.5rem] opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all duration-300">
+                <span class="material-symbols-outlined absolute left-[-2.5rem] opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all duration-300 hidden md:inline-block">
                   arrow_forward
                 </span>
                 <span class="transform group-hover:translate-x-2 transition-transform duration-300">{service}</span>
@@ -59,11 +59,36 @@
 </div>
 
 <style>
-  /* Opcional: Si quieres usar una fuente personalizada */
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap');
-  
+  @font-face {
+    font-family: 'Calibri';
+    src: url('/fonts/calibri-regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: 'Calibri';
+    src: url('/fonts/calibri-bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: 'Calibri';
+    src: url('/fonts/calibri-italic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+  }
+
+  @font-face {
+    font-family: 'Calibri';
+    src: url('/fonts/calibri-bold-italic.ttf') format('truetype');
+    font-weight: bold;
+    font-style: italic;
+  }
+
   :global(body) {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Calibri', sans-serif;
   }
   
   /* Animación suave para el hover */
@@ -98,5 +123,13 @@
       'wght' 400,
       'GRAD' 0,
       'opsz' 24;
+  }
+
+  /* Media queries para ajustes adicionales en móvil */
+  @media (max-width: 768px) {
+    .container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
   }
 </style> 
