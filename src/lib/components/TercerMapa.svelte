@@ -5,6 +5,7 @@
     import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
   
     let container;
+    let showLogo = false; // Variable para controlar la visibilidad del logo
     
     onMount(() => {
       // Configuración básica de Three.js
@@ -164,9 +165,11 @@
   </script>
   
   <div bind:this={container} class="viewer-container">
-    <div class="logo-container">
-      <img src="/logo.svg" alt="Logo" class="logo">
-    </div>
+    {#if showLogo}
+        <div class="logo-container">
+            <img src="/logo.svg" alt="Logo" class="logo">
+        </div>
+    {/if}
   </div>
   
   <style>

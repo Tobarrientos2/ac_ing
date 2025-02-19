@@ -44,7 +44,7 @@
   }
 </style>
 
-<section class="bg-[#2A2A2A] text-[#ECE8E7] py-16">
+<section class="bg-[#2A2A2A] text-[#ECE8E7] py-16 z-[1] relative">
   <div class="container mx-auto px-4 md:px-8">
     <!-- Grid Principal -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">

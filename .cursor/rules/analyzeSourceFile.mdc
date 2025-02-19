@@ -1,0 +1,223 @@
+---
+description: analyzeSourceFile
+globs: 
+---
+# Source File Analysis Rule
+
+Reglas para analizar archivos fuente que serán migrados a pulses.
+
+## 0. REGLA PRIORITARIA
+- **CRÍTICO**: NUNCA crear pulses sin analizar completamente el código fuente
+- **CRÍTICO**: NUNCA asumir comportamientos basados en nombres de funciones
+- **CRÍTICO**: NUNCA omitir funciones auxiliares o dependencias
+
+## 1. Proceso de Análisis
+
+### 1.1 Lectura Inicial
+1. **Verificación de Existencia**:
+   - Confirmar que el archivo existe
+   - Verificar permisos de lectura
+   - Si no existe → DETENER y reportar
+
+2. **Lectura Completa**:
+   ```typescript
+   // ✅ Correcto
+   await read_file({
+     relative_workspace_path: "path/to/file",
+     should_read_entire_file: true  // Leer TODO el archivo
+   });
+
+   // ❌ Incorrecto
+   await read_file({
+     // ... leer solo algunas líneas
+   });
+   ```
+
+### 1.2 Mapeo de Código
+1. **Exportaciones**:
+   - Identificar todas las funciones/variables exportadas
+   - Documentar sus firmas y tipos
+   - Marcar las que son importadas por componentes
+
+2. **Funciones Internas**:
+   - Listar todas las funciones no exportadas
+   - Documentar propósito y comportamiento
+   - Identificar dónde se utilizan
+
+3. **Dependencias**:
+   ```typescript
+   // Ejemplo de documentación
+   /*
+   Función: processUserData
+   Dependencias:
+   ├── validateUser
+   │   ├── checkEmail
+   │   └── checkAge
+   └── normalizeData
+       └── formatString
+   */
+   ```
+
+### 1.3 Identificación de Acciones
+1. **¿Qué es una Acción?**
+   - Conjunto cohesivo de funciones
+   - Propósito claro y único
+   - Puede incluir múltiples funciones relacionadas
+   - Debe ser autocontenida
+
+2. **Criterios para Identificar Acciones**:
+   - Funciones que trabajan sobre los mismos datos
+   - Operaciones secuenciales relacionadas
+   - Validaciones y transformaciones asociadas
+   - Manejo de errores común
+
+3. **Ejemplos de Acciones**:
+   ```typescript
+   // ✅ Una Acción Cohesiva
+   {
+     // Todas estas funciones forman una acción de "Validación de Usuario"
+     validateUser(data)
+     normalizeUserData(data)
+     validateEmail(email)
+     validateAge(age)
+     formatErrorMessages(errors)
+   }
+
+   // ❌ NO es una Acción Cohesiva
+   {
+     // Funciones sin relación clara
+     validateUser(data)
+     updateUIComponent()
+     calculateTotals()
+   }
+   ```
+
+### 1.4 Análisis de Comportamiento
+1. **Casos de Uso**:
+   - Identificar todos los escenarios posibles
+   - Documentar entradas y salidas esperadas
+   - Mapear flujos alternativos
+
+2. **Validaciones**:
+   - Listar todas las validaciones
+   - Documentar reglas de negocio
+   - Identificar manejo de casos especiales
+
+3. **Manejo de Errores**:
+   - Documentar tipos de errores
+   - Analizar estrategias de recuperación
+   - Identificar mensajes de error
+
+4. **Transformaciones**:
+   - Mapear cambios en los datos
+   - Documentar formatos esperados
+   - Identificar reglas de transformación
+
+## 2. Ejemplo de Análisis Completo
+
+```typescript
+// Archivo Original: utils/exerciseUtils.js
+
+/*
+1. ANÁLISIS DE EXPORTACIONES
+├── checkAnswer (principal)
+└── getPseudoCodeAndSolutionLines (auxiliar)
+
+2. ANÁLISIS DE DEPENDENCIAS
+checkAnswer
+├── normalizeInput
+├── validateAnswer
+└── generateFeedback
+
+getPseudoCodeAndSolutionLines
+├── shuffleArray
+└── selectExercise
+
+3. IDENTIFICACIÓN DE ACCIONES
+Acción 1: Verificación de Respuesta
+├── Propósito: Validar respuesta del usuario
+├── Funciones:
+│   ├── checkAnswer (principal)
+│   ├── normalizeInput (normalización)
+│   ├── validateAnswer (validación)
+│   └── generateFeedback (retroalimentación)
+└── Comportamiento:
+    ├── Normaliza entrada
+    ├── Compara con solución
+    └── Genera retroalimentación
+
+Acción 2: Generación de Ejercicios
+├── Propósito: Seleccionar nuevo ejercicio
+├── Funciones:
+│   ├── getPseudoCodeAndSolutionLines (principal)
+│   ├── shuffleArray (auxiliar)
+│   └── selectExercise (selección)
+└── Comportamiento:
+    ├── Mezcla ejercicios
+    ├── Selecciona uno
+    └── Prepara formato
+*/
+
+// Código Original
+export function checkAnswer(input, solution) {
+  const normalizedInput = normalizeInput(input);
+  const normalizedSolution = normalizeInput(solution);
+  const result = validateAnswer(normalizedInput, normalizedSolution);
+  return {
+    isCorrect: result.valid,
+    feedback: generateFeedback(result)
+  };
+}
+
+function normalizeInput(text) {
+  return text.trim().toLowerCase();
+}
+
+function validateAnswer(input, solution) {
+  if (!input) return { valid: false, reason: 'empty' };
+  return { 
+    valid: input === solution,
+    similarity: calculateSimilarity(input, solution)
+  };
+}
+
+function generateFeedback(result) {
+  if (!result.valid) {
+    return result.reason === 'empty' 
+      ? 'Por favor, escribe una respuesta'
+      : 'Intenta de nuevo';
+  }
+  return '¡Correcto!';
+}
+
+// 4. CONCLUSIONES
+/*
+- Se identifican dos acciones principales
+- Cada acción es cohesiva y tiene propósito claro
+- Se recomienda crear dos pulses separados:
+  1. RespuestaVerificar
+  2. EjercicioGenerar
+*/
+```
+
+## 3. Checklist de Análisis
+
+- [ ] Archivo leído completamente
+- [ ] Exportaciones identificadas
+- [ ] Funciones internas mapeadas
+- [ ] Dependencias documentadas
+- [ ] Acciones identificadas
+- [ ] Comportamientos analizados
+- [ ] Validaciones documentadas
+- [ ] Transformaciones mapeadas
+- [ ] Manejo de errores revisado
+- [ ] Conclusiones documentadas
+
+metadata:
+  priority: critical
+  version: 1.0
+  tags:
+    - analysis
+    - source-code
+    - pulses
+    - migration

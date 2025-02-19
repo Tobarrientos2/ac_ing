@@ -1,0 +1,95 @@
+---
+description: workflowZeroTwo
+globs: 
+---
+# WorkflowZeroTwo: Agregar Funcionalidades a Componentes Svelte
+
+## Descripción
+Este workflow define el proceso de agregar nuevas funcionalidades a componentes Svelte, incluyendo el análisis, implementación, documentación y mantenimiento de los pulses asociados.
+
+## Activación
+Este workflow se activa cuando:
+- El usuario solicita agregar una nueva funcionalidad a un componente Svelte
+- El usuario necesita implementar una nueva feature en un componente existente
+- Se requiere extender la funcionalidad de un componente
+
+## Proceso Principal
+
+### 1. Análisis de Requerimientos
+1. Identificar la funcionalidad requerida
+2. Determinar si se necesitan nuevos pulses
+3. Analizar impacto en el componente existente
+
+### 2. Diseño de la Solución
+1. Diseñar la estructura de los nuevos pulses (si se requieren)
+2. Planificar los cambios en el componente
+3. Identificar dependencias y efectos secundarios
+
+### 3. Implementación
+1. Crear nuevos pulses siguiendo `createPulse.mdc`
+2. Modificar el componente Svelte
+3. Implementar la lógica de integración
+
+### 4. Documentación y Mantenimiento
+Utilizar `analyzePulseListMd.mdc` para:
+1. Analizar los nuevos pulses creados
+2. Documentar su funcionalidad
+3. Mantener actualizada la lista de pulses
+
+### 5. Estructura del Archivo pulsesList.md
+El archivo debe mantener la siguiente estructura:
+```markdown
+# Lista de Pulses Disponibles
+
+## Pulses del Sistema
+- **[NombrePulse]**: [Descripción concisa de 20 palabras máximo]
+
+## Categorías
+### Interacción de Usuario
+[Pulses relacionados con interacción]
+
+### Procesamiento de Datos
+[Pulses relacionados con datos]
+
+### Sistema
+[Pulses del sistema]
+```
+
+### 6. Reglas de Documentación
+- Cada pulse debe tener una descripción concisa (máximo 20 palabras)
+- La descripción debe iniciar con un verbo en presente
+- Debe indicar claramente el propósito del pulse
+- Debe evitar tecnicismos innecesarios
+
+### 7. Categorización
+Los pulses deben categorizarse según su función principal:
+- **Interacción de Usuario**: Pulses relacionados con UI/UX
+- **Procesamiento de Datos**: Pulses que manipulan o transforman datos
+- **Sistema**: Pulses de configuración o funcionalidad core
+
+## Ejemplo de Uso
+
+```typescript
+// Cuando se agrega una nueva funcionalidad
+1. Analizar requerimientos
+2. Diseñar solución
+3. Crear nuevos pulses necesarios
+4. Modificar componente
+5. Documentar cambios usando analyzePulseListMd.mdc
+```
+
+## Notas Importantes
+- La documentación es parte integral del proceso de desarrollo
+- Cada nueva funcionalidad debe estar bien documentada
+- Los pulses deben seguir las convenciones establecidas
+- La lista de pulses debe mantenerse actualizada como parte del proceso
+
+metadata:
+  version: 1.2
+  priority: high
+  tags:
+    - svelte
+    - features
+    - pulses
+    - documentation
+    - workflow 

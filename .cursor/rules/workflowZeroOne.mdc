@@ -1,0 +1,154 @@
+---
+description: workflowZeroOne
+globs: 
+---
+# Workflow 0.1: Refactorización de Componentes Svelte a Pulses
+
+Flujo de trabajo para la refactorización de componentes Svelte, migrando lógica a pulses.
+
+## 1. Reglas de MDCs
+
+### 1.1 Jerarquía y Dependencias
+- Los MDCs pueden hacer referencia a otros MDCs
+- Si un MDC referencia a otro, la IA DEBE:
+  1. Detener el análisis actual
+  2. Leer y analizar el MDC referenciado
+  3. Aplicar las reglas del MDC referenciado
+  4. Volver al MDC original y continuar
+
+### 1.2 Dependencias del Flujo
+```mermaid
+graph TD
+    A[analyzeSvelteComponent.mdc] -->|Si hay código para migrar| B[analyzeSourceFile.mdc]
+    B -->|Completado| A
+    A --> C[createPulse.mdc]
+    C --> D[createTestForPulse.mdc]
+    D --> E[runCreatedTest.mdc]
+    E -->|Tests OK| F[usePulse.mdc]
+    F --> G[createCommitAndPush.mdc]
+    G --> H[Fin del Ciclo]
+```
+
+## 2. Orden de Ejecución
+
+### 2.1 Secuencia de MDCs
+1. `analyzeSvelteComponent.mdc`: Análisis inicial de componentes
+   - Puede referenciar: `analyzeSourceFile.mdc`
+   - **Objetivo**: Identificar lógica migrable
+   - **Salida**: Lista de acciones a migrar
+
+2. `createPulse.mdc`: Creación de pulses
+   - **Objetivo**: Implementar pulses identificados
+   - **Salida**: Nuevos archivos de pulses
+
+3. `createTestForPulse.mdc`: Tests para pulses
+   - **Objetivo**: Crear tests para cada pulse
+   - **Salida**: Archivos de test
+
+4. `runCreatedTest.mdc`: Ejecución de tests
+   - **Objetivo**: Validar pulses
+   - **Salida**: Resultados de tests
+
+5. `usePulse.mdc`: Implementación
+   - **Objetivo**: Integrar pulses en componente
+   - **Salida**: Componente actualizado
+
+6. `createIssue.mdc` (opcional)
+   - **Objetivo**: Documentar cambios mayores
+   - **Salida**: Nuevo issue
+
+7. `createCommitAndPush.mdc`: Finalización
+   - **Objetivo**: Guardar cambios
+   - **Salida**: Commit en repositorio
+
+## 3. Reglas del Flujo
+
+### 3.1 Reglas Generales
+1. **Validación**:
+   - Verificar cada paso antes de continuar
+   - No avanzar si hay errores
+   - Documentar decisiones importantes
+
+2. **Tests**:
+   - Tests son OBLIGATORIOS
+   - Deben pasar antes de implementar
+   - Cubrir casos principales
+
+3. **Implementación**:
+   - Un pulse por ciclo
+   - Completar ciclo antes de siguiente pulse
+   - Mantener componente funcional
+
+### 3.2 Puntos de Control
+1. **Después del Análisis**:
+   - Confirmar acciones a migrar
+   - Verificar dependencias
+   - Validar alcance
+
+2. **Después de Tests**:
+   - Todos los tests deben pasar
+   - Cobertura adecuada
+   - Casos edge cubiertos
+
+3. **Después de Implementación**:
+   - Componente funciona correctamente
+   - No hay código legacy
+   - Documentación actualizada
+
+## 4. Notas Importantes
+
+1. **Ciclo de Vida**:
+   - Un pulse a la vez
+   - Ciclo completo obligatorio
+   - No mezclar pulses
+
+2. **Comunicación**:
+   - Informar progreso al usuario
+   - Solicitar confirmaciones
+   - Documentar decisiones
+
+3. **Calidad**:
+   - Tests son obligatorios
+   - No implementar sin tests
+   - Mantener estándares
+
+## 5. Checklist por Etapa
+
+### 5.1 Análisis
+- [ ] Componente analizado completamente
+- [ ] Código fuente revisado
+- [ ] Acciones identificadas
+- [ ] Dependencias mapeadas
+
+### 5.2 Creación
+- [ ] Pulse implementado
+- [ ] Tipos definidos en `types.ts`
+- [ ] Documentación incluida
+- [ ] Validaciones implementadas
+
+### 5.3 Testing
+- [ ] Tests creados
+- [ ] Casos edge cubiertos
+- [ ] Tests ejecutados
+- [ ] Todos los tests pasan
+
+### 5.4 Implementación
+- [ ] Componente actualizado
+- [ ] Código legacy eliminado
+- [ ] Funcionalidad verificada
+- [ ] Documentación actualizada
+
+### 5.5 Finalización
+- [ ] Cambios commiteados
+- [ ] Issues creados/actualizados
+- [ ] Documentación completa
+- [ ] Usuario informado
+
+metadata:
+  priority: critical
+  version: 1.0
+  tags:
+    - workflow
+    - svelte
+    - pulses
+    - refactoring 

@@ -1,6 +1,6 @@
 ---
-description: Worflow iss
-globs: 
+description: WorkflowAI
+globs: "**/*"
 ---
 # AI Workflow Rule
 
@@ -18,379 +18,76 @@ actions:
     message: |
       # Flujos de Trabajo de la IA
 
-      ## 0. REGLAS CRÍTICAS
+      ## 0. REGLA CRÍTICA: Identificación de Flujos
 
-      ### 0.1 Gestión de Tipos TypeScript
-      - **CRÍTICO**: Todos los tipos de la aplicación DEBEN estar centralizados en:
-        ```
-        src/lib/types/types.ts
-        ```
-      
-      - **Estructura del archivo types.ts**:
-        ```typescript
-        // 1. Tipos base (interfaces fundamentales)
-        export interface BaseType {
-          // ...
-        }
+      ### 0.1 Pregunta Fundamental
+      Antes de proceder con cualquier acción, la IA DEBE preguntarse:
+      ```
+      ¿Desea el usuario ejecutar alguno de los flujos automatizados disponibles?
+      ```
 
-        // 2. Tipos para Pulses
-        export interface PulseResponse<T> {
-          success: boolean;
-          data?: T;
-          error?: string;
-        }
+      ### 0.2 Flujos Disponibles
+      Actualmente existen DOS flujos automatizados:
 
-        // 3. Tipos específicos por funcionalidad
-        export interface SpecificFeatureType {
-          // ...
-        }
-        ```
+      1. **Flujo 0.1: Refactorización de Componentes Svelte a Pulses**
+         - **Activador**: Usuario solicita explícitamente refactorizar un componente Svelte para usar pulses
+         - **Palabras Clave**: "refactorizar", "componente svelte", "pulses"
+         - **Workflow**: `workflowZeroOne.md`
+         - **NO activar** este flujo en ninguna otra situación
 
-      - **Reglas de Tipos**:
-        * NO crear archivos de tipos separados
-        * NO definir tipos en archivos de componentes
-        * NO definir tipos en archivos de pulses
-        * Mantener tipos relacionados agrupados con comentarios
-        * Documentar tipos complejos
-        * Usar exports nombrados
+      2. **Flujo 0.2: Agregar Funcionalidades a Componentes Svelte**
+         - **Activador**: Usuario solicita agregar nuevas funcionalidades a un componente Svelte
+         - **Palabras Clave**: "agregar funcionalidad", "nueva feature", "componente svelte"
+         - **Workflow**: `workflowZeroTwo.md`
+         - **MDC**: `analyzePulseListMd.mdc` (usado durante el proceso)
 
-      - **Proceso para Nuevos Tipos**:
-        1. Identificar necesidad de nuevo tipo
-        2. Verificar si existe tipo similar en `types.ts`
-        3. Agregar nuevo tipo en la sección apropiada
-        4. Documentar el tipo si es complejo
-        5. Exportar el tipo
-        6. Importar desde donde se necesite
+      ### 0.3 Proceso de Activación
+      ```mermaid
+      graph TD
+        A[Recibir Mensaje Usuario] --> B{¿Qué flujo solicita?}
+        B -->|Flujo 0.1| C[Cargar workflowZeroOne.md]
+        B -->|Flujo 0.2| D[Cargar workflowZeroTwo.md]
+        B -->|Ninguno| E[Respuesta Normal]
+        C --> F[Ejecutar Flujo 0.1]
+        D --> G[Ejecutar Flujo 0.2]
+      ```
 
-      ### 0.2 Migración de Utils y Archivos JS/TS a Pulses
-      // ... resto del contenido existente ...
+      ## 1. Reglas de Activación
 
-      ## 1. Refactorización de Componentes Svelte con Pulses
-      
-      CUANDO el usuario solicite "refactorizar un componente Svelte con Pulses":
+      1. **Validación Estricta**:
+         - Confirmar explícitamente que el usuario desea ejecutar el flujo
+         - No asumir intención basada en contexto
+         - Detener si no hay confirmación clara
 
-      1. **Análisis del Componente**:
-         - Leer `analyzeSvelteComponent.mdc`
-         - Analizar el componente siguiendo los criterios:
-           * Patrones de operaciones aislables
-           * Características de reutilización
-           * Indicadores positivos/negativos
-           * Ejemplos similares
-         - Identificar candidatos para pulses
-         - **IMPORTANTE**: Seleccionar UNA SOLA lógica para refactorizar
-         - Informar al usuario sobre la lógica seleccionada y esperar confirmación
+      2. **Exclusividad**:
+         - Solo UN flujo puede estar activo a la vez
+         - Completar o cancelar el flujo actual antes de iniciar otro
+         - No mezclar flujos o saltarse pasos
+         - Los flujos son independientes
 
-      2. **Ciclo Completo para el Pulse Seleccionado**:
-         a. **Creación del Pulse**:
-            1. Leer `createPulse.mdc`
-            2. Crear el pulse siguiendo la estructura definida
-            3. Validar que cumpla con todas las reglas
+      3. **Comunicación**:
+         - Informar al usuario qué flujo se va a ejecutar
+         - Confirmar antes de proceder
+         - Mantener informado del progreso
 
-         b. **Testing del Pulse**:
-            1. Leer `createTestForPulse.mdc`
-            2. Crear tests siguiendo la estructura definida
+      ## 2. MDCs Disponibles
 
-         c. **Ejecución y Validación de Tests**:
-            1. Leer `runCreatedTest.mdc`
-            2. Verificar entorno de testing
-            3. Ejecutar tests específicos del pulse
-            4. Si fallan:
-               * Analizar tipo de error (pulse/test/tipos)
-               * Aplicar correcciones necesarias
-               * Re-ejecutar tests
-               * Máximo 3 iteraciones antes de consultar al usuario
-            5. No continuar hasta que los tests pasen
+      1. **Flujo 0.1**:
+         - Ver `workflowZeroOne.md` para el detalle completo del flujo
+         - Incluye orden de MDCs y reglas específicas
 
-         d. **Implementación en Componente**:
-            1. Leer `usePulse.mdc`
-            2. Refactorizar el componente para usar el nuevo pulse
-            3. Verificar que la funcionalidad se mantiene
+      2. **Flujo 0.2**:
+         - Ver `workflowZeroTwo.md` para el proceso de agregar funcionalidades
+         - Utiliza `analyzePulseListMd.mdc` como parte del proceso de análisis y documentación
 
-         e. **Documentación y Push**:
-            1. Leer `createIssue.mdc`
-            2. Crear issue documentando cambios
-            3. Leer `createCommitAndPush.mdc`
-            4. **IMPORTANTE**: Utilizar el mismo repositorio y usuario (Tobarrientos2) que se usó en createIssue.mdc
-            5. Realizar commit y push siguiendo convenciones
-
-      3. **Siguiente Iteración** (SOLO si el usuario lo solicita explícitamente):
-         - Si el usuario desea refactorizar otra lógica del mismo componente:
-           1. Volver al paso 1 para seleccionar una nueva lógica
-           2. Repetir el ciclo completo para esa nueva lógica
-         - NUNCA iniciar la refactorización de múltiples lógicas simultáneamente
-
-      ## 2. Creación de Issues en GitHub
-
-      CUANDO el usuario solicite "crear un issue":
-
-      1. Leer `createIssue.mdc`
-      2. Seguir el formato especificado
-      3. Usar MCP server de GitHub para crear el issue
-      4. **IMPORTANTE**: Almacenar el repositorio y usuario utilizados para su uso posterior en commits y pushes
-
-      ## 3. Creación de Pulses Individuales
-
-      CUANDO el usuario solicite "crear un pulse":
-
-      1. Leer `createPulse.mdc`
-     2. Crear el pulse siguiendo la convención [Entidad][Acción]
-      3. Verificar si requiere endpoint (según regla 0.5)
-      4. Si requiere endpoint:
-         - Leer `createEndpoint.mdc`
-         - Crear el endpoint correspondiente
-      5. Leer `createTestForPulse.mdc`
-      6. Crear los tests
-      7. Leer `runCreatedTest.mdc`
-      8. Ejecutar y verificar tests
-
-      ## 4. Implementación de Pulses en Componentes
-
-      CUANDO el usuario solicite "implementar un pulse en un componente":
-
-      1. Leer `usePulse.mdc`
-      2. Implementar siguiendo las guías
-      3. Verificar la implementación
-
-      ## 5. Análisis de Componentes Svelte
-
-      CUANDO el usuario solicite "analizar un componente Svelte":
-
-      1. Leer `analyzeSvelteComponent.mdc`
-      2. Seguir proceso de análisis:
-         - Revisión inicial
-         - Evaluación
-         - Decisión
-         - Documentación
-      3. Presentar resultados al usuario
-      4. Sugerir posibles refactorizaciones
-
-      ## 6. Commit y Push de Cambios
-
-      CUANDO el usuario solicite "hacer push de cambios":
-
-      1. Leer `createCommitAndPush.mdc`
-      2. Verificar remotes:
-         - Si hay uno solo, usarlo
-         - Si hay múltiples, consultar al usuario
-      3. Preparar mensaje de commit:
-         - Seguir convención de tipos
-         - Incluir número de issue
-         - Respetar límites de caracteres
-      4. Usar MCP GitHub para push:
-         - Verificar rama correcta
-         - Validar permisos
-         - Manejar errores si ocurren
-      5. **IMPORTANTE**: Si este push está relacionado con un issue creado previamente, asegurarse de usar el mismo repositorio y usuario (Tobarrientos2) que se usó en createIssue.mdc
-
-      ## Reglas Generales
-
-      1. **Orden de Lectura de MDCs**:
-         - Siempre leer los MDCs en el orden especificado para cada flujo
-         - No saltar pasos del flujo
-
-      2. **Validación**:
-         - Verificar que cada paso cumple con su MDC correspondiente
-         - No proceder al siguiente paso hasta validar el actual
-
-      3. **Tests**:
-         - Siempre crear y ejecutar tests para nuevos pulses
-         - Seguir el proceso de `runCreatedTest.mdc` para validación
-         - No implementar en componentes hasta que los tests pasen
-
-      4. **Documentación**:
-         - Crear issues para cambios significativos
-         - Documentar decisiones importantes
-
-      5. **Tipos**:
-         - Centralizar TODOS los tipos en `types.ts`
-         - Mantener la estructura organizada y documentada
-         - No duplicar definiciones de tipos
-         - Usar tipos específicos en lugar de `any`
-
-      ## Notas Importantes
-
-      1. Solo iniciar estos flujos cuando el usuario lo solicite explícitamente
-      2. Mantener al usuario informado del progreso
-      3. Solicitar confirmación en pasos críticos
-      4. Documentar cualquier decisión importante tomada
-      5. NUNCA trabajar en múltiples pulses simultáneamente
-      6. Completar el ciclo completo de un pulse antes de pasar al siguiente
-      7. Mantener consistencia en el uso del repositorio y usuario entre issues y commits
-      8. SIEMPRE definir tipos en `types.ts`
-
-      ## Resumen de MDCs Disponibles
-
-      1. `createPulse.mdc`: Creación de pulses
-      2. `createTestForPulse.mdc`: Tests para pulses
-      3. `runCreatedTest.mdc`: Ejecución y validación de tests
-      4. `usePulse.mdc`: Implementación de pulses
-      5. `createIssue.mdc`: Creación de issues
-      6. `analyzeSvelteComponent.mdc`: Análisis de componentes
-      7. `createCommitAndPush.mdc`: Commits y push
-      8. `workflowAI.mdc`: Flujo general de trabajo
-
-      ### 0.3 Verificación OBLIGATORIA de Estado Actual
-      - **CRÍTICO**: La IA DEBE verificar el estado actual ANTES de CUALQUIER acción que:
-        1. Modifique archivos
-        2. Documente cambios
-        3. Genere commits/issues
-
-      - **Proceso de Verificación**:
-        ```typescript
-        // Ejemplo de verificación sistemática
-        async function verificarEstadoActual(archivos: string[]) {
-          const estadoActual = {};
-          for (const archivo of archivos) {
-            const contenido = await read_file({
-              relative_workspace_path: archivo,
-              should_read_entire_file: true
-            });
-            estadoActual[archivo] = contenido;
-          }
-          return estadoActual;
-        }
-        ```
-
-      - **Reglas de Verificación**:
-        * NUNCA asumir estado basado en el historial de la conversación
-        * SIEMPRE leer el estado actual antes de:
-          - Crear un issue
-          - Hacer commit/push
-          - Sugerir cambios adicionales
-        * SIEMPRE informar discrepancias al usuario
-        * SIEMPRE usar la información más reciente
-
-      - **Comportamiento por Etapa**:
-        1. **Antes de Crear Issue**:
-           - Verificar estado actual de TODOS los archivos relevantes
-           - Documentar solo los cambios confirmados
-           - Esta verificación servirá también para el commit posterior
-
-        2. **Antes de Commit/Push**:
-           - NO es necesario verificar nuevamente si ya se verificó para el issue
-           - Usar la información de la última verificación
-           - Solo verificar nuevamente si el usuario indica cambios adicionales
-
-        3. **Antes de Sugerir Cambios**:
-           - Verificar estado actual
-           - Comparar con el estado esperado
-           - Informar discrepancias
-
-      - **Ejemplos de Uso**:
-        ```typescript
-        // Antes de crear issue
-        const estadoActual = await verificarEstadoActual([
-          'src/lib/components/Component.svelte',
-          'src/lib/types/types.ts'
-        ]);
-        // Este estado servirá tanto para el issue como para el commit
-
-        // Si el usuario indica cambios adicionales
-        const nuevoEstado = await verificarEstadoActual([
-          'src/lib/components/Component.svelte'
-        ]);
-        // Verificar solo lo necesario
-        ```
-
-      - **Manejo de Errores**:
-        * Si no se puede verificar → DETENER y notificar al usuario
-        * Si hay discrepancias → DETENER y solicitar clarificación
-        * Si hay archivos faltantes → DETENER y reportar
-
-      - **Beneficios**:
-        * Evita documentación incorrecta
-        * Previene commits basados en suposiciones
-        * Mantiene sincronización con el estado real
-        * Reduce errores de comunicación
-
-      ### 0.4 Verificación y Creación de ClientPulses
-      - **CRÍTICO**: La IA DEBE verificar la existencia de `clientPulses.ts` cuando:
-        1. Se implementen pulses en componentes
-        2. Se detecten importaciones de `$lib/clientPulses`
-        3. Se encuentren errores de módulo no encontrado
-
-      - **Proceso de Verificación**:
-        ```typescript
-        // Verificar existencia del archivo
-        const clientPulsesExists = await read_file({
-          relative_workspace_path: "src/lib/clientPulses.ts",
-          should_read_entire_file: true
-        });
-
-        if (!clientPulsesExists) {
-          // Leer y aplicar createClientPulsesFile.mdc
-          await fetch_rules(["createClientPulsesFile"]);
-        }
-        ```
-
-      - **Reglas de Verificación**:
-        * SIEMPRE verificar antes de implementar pulses
-        * Si no existe, DETENER y crear usando `createClientPulsesFile.mdc`
-        * NUNCA asumir su existencia basado en el historial
-
-      ### 0.5 Creación de Endpoints para Pulses
-      - **CRÍTICO**: La IA DEBE verificar si un pulse requiere endpoint basado en sus importaciones
-      
-      #### Cuándo Crear un Endpoint
-      Se debe crear un endpoint **ÚNICAMENTE** cuando el pulse:
-      - Utiliza `fs` (File System)
-      - Utiliza `path`
-      - Requiere acceso directo al sistema de archivos
-      - Necesita realizar operaciones de I/O a nivel de sistema
-
-      #### Proceso de Verificación y Creación
-      1. Al crear un nuevo pulse, verificar sus importaciones:
-         ```typescript
-         // Si el pulse tiene alguna de estas importaciones, REQUIERE endpoint
-         import { fs } from 'fs-extra';
-         import { path } from 'path';
-         import * as fs from 'fs';
-         // etc...
-         ```
-
-      2. Si requiere endpoint:
-         - Leer `createEndpoint.mdc`
-         - Crear el endpoint siguiendo la estructura:
-           ```
-           /api/[entidad]/[acción]/+server.ts
-           ```
-         - Implementar las validaciones de seguridad necesarias
-
-      3. Si NO requiere endpoint:
-         - NO crear archivo en `/api`
-         - El pulse se comunicará directamente con el backend existente
-
-  ### 0.4 Verificación y Creación de ClientPulses
-- **CRÍTICO**: La IA DEBE verificar la existencia de `clientPulses.ts` cuando:
-  1. Se implementen pulses en componentes
-  2. Se detecten importaciones de `$lib/clientPulses`
-  3. Se encuentren errores de módulo no encontrado
-
-- **Proceso de Verificación**:
-  ```typescript
-  // Verificar existencia del archivo
-  const clientPulsesExists = await read_file({
-    relative_workspace_path: "src/lib/clientPulses.ts",
-    should_read_entire_file: true
-  });
-
-  if (!clientPulsesExists) {
-    // Leer y aplicar createClientPulsesFile.mdc
-    await fetch_rules(["createClientPulsesFile"]);
-  }
-  ```
-
-- **Reglas de Verificación**:
-  * SIEMPRE verificar antes de implementar pulses
-  * Si no existe, DETENER y crear usando `createClientPulsesFile.mdc`
-  * NUNCA asumir su existencia basado en el historial
+      3. **Gestión de Tipos**:
+         - Ver `typeManagement.md` para reglas de gestión de tipos
+         - Aplica a todos los flujos
 
 metadata:
   priority: critical
-  version: 1.2
+  version: 1.7
   tags:
     - workflow
     - ai
     - automation
-    - types
-    - typescript

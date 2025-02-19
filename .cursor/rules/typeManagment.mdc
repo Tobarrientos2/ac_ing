@@ -1,0 +1,167 @@
+---
+description: typeManagment
+globs: 
+---
+# TypeScript Type Management Rule
+
+Reglas para la gestión centralizada de tipos TypeScript en la aplicación.
+
+## 0. REGLA CRÍTICA: Centralización de Tipos
+
+### 0.1 Ubicación Central
+- **CRÍTICO**: Todos los tipos de la aplicación DEBEN estar centralizados en:
+  ```
+  src/lib/types/types.ts
+  ```
+
+### 0.2 Estructura del Archivo
+```typescript
+// 1. Tipos base (interfaces fundamentales)
+export interface BaseType {
+  // ...
+}
+
+// 2. Tipos para Pulses
+export interface PulseResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+}
+
+// 3. Tipos específicos por funcionalidad
+export interface SpecificFeatureType {
+  // ...
+}
+```
+
+## 1. Reglas de Tipos
+
+### 1.1 Reglas Fundamentales
+- ❌ NO crear archivos de tipos separados
+- ❌ NO definir tipos en archivos de componentes
+- ❌ NO definir tipos en archivos de pulses
+- ✅ Mantener tipos relacionados agrupados con comentarios
+- ✅ Documentar tipos complejos
+- ✅ Usar exports nombrados
+
+### 1.2 Organización
+1. **Secciones**:
+   ```typescript
+   // === TIPOS BASE ===
+   // Interfaces fundamentales usadas en toda la app
+
+   // === TIPOS DE PULSES ===
+   // Tipos específicos para pulses y sus respuestas
+
+   // === TIPOS DE COMPONENTES ===
+   // Tipos usados en componentes Svelte
+
+   // === TIPOS DE UTILIDAD ===
+   // Tipos auxiliares y utilitarios
+   ```
+
+2. **Documentación**:
+   ```typescript
+   /**
+    * Representa la respuesta de un pulse
+    * @template T - Tipo de datos retornados
+    * @property success - Indica si la operación fue exitosa
+    * @property data - Datos retornados (opcional)
+    * @property error - Mensaje de error si la operación falló
+    */
+   export interface PulseResponse<T> {
+     success: boolean;
+     data?: T;
+     error?: string;
+   }
+   ```
+
+## 2. Proceso para Nuevos Tipos
+
+### 2.1 Flujo de Creación
+```mermaid
+graph TD
+    A[Identificar Necesidad] --> B[Verificar Existencia]
+    B -->|No Existe| C[Identificar Sección]
+    B -->|Existe Similar| D[Extender/Modificar]
+    C --> E[Crear Tipo]
+    D --> E
+    E --> F[Documentar]
+    F --> G[Exportar]
+```
+
+### 2.2 Pasos Detallados
+1. **Identificación**:
+   - Analizar necesidad específica
+   - Definir propiedades requeridas
+   - Identificar casos de uso
+
+2. **Verificación**:
+   - Buscar tipos similares existentes
+   - Evaluar posibilidad de extensión
+   - Evitar duplicación
+
+3. **Implementación**:
+   - Ubicar en sección apropiada
+   - Seguir convenciones de nombres
+   - Documentar adecuadamente
+   - Exportar el tipo
+
+4. **Uso**:
+   - Importar desde `types.ts`
+   - Usar tipos específicos
+   - Evitar `any`
+
+## 3. Ejemplos
+
+### 3.1 Tipo Simple
+```typescript
+// === TIPOS BASE ===
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+```
+
+### 3.2 Tipo Complejo
+```typescript
+// === TIPOS DE PULSES ===
+/**
+ * Configuración para un pulse de validación
+ * @property rules - Reglas de validación
+ * @property errorMessages - Mensajes personalizados
+ * @property options - Opciones adicionales
+ */
+export interface ValidationConfig {
+  rules: {
+    [key: string]: (value: any) => boolean;
+  };
+  errorMessages: {
+    [key: string]: string;
+  };
+  options?: {
+    strict?: boolean;
+    async?: boolean;
+  };
+}
+```
+
+## 4. Checklist
+
+- [ ] Tipo ubicado en `types.ts`
+- [ ] Sección apropiada identificada
+- [ ] Documentación completa
+- [ ] Export nombrado
+- [ ] Sin duplicación
+- [ ] Nombres descriptivos
+- [ ] Tipos específicos (no any)
+
+metadata:
+  priority: critical
+  version: 1.0
+  tags:
+    - typescript
+    - types
+    - management
+    - organization 

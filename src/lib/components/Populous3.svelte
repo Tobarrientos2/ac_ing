@@ -40,7 +40,7 @@
             transition:fly={{ y: 50, duration: 800, delay: 300 + (i * 100), easing: cubicOut }}
           >
             <div class="text-[1.5rem] md:text-[2rem] leading-tight transition-all cursor-pointer py-3">
-              <span class="group-hover:text-[#FF4D00] inline-flex items-center">
+              <span class="group-hover:text-[#EE8035] inline-flex items-center">
                 <span class="material-symbols-outlined absolute left-[-2.5rem] opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all duration-300 hidden md:inline-block">
                   arrow_forward
                 </span>
@@ -101,9 +101,9 @@
     background-color: transparent;
   }
   
-  /* Ajustamos el color naranja a uno más eléctrico */
+  /* Ajustamos el color naranja al nuevo color */
   .group:hover span {
-    color: #FF4D00; /* Color naranja más eléctrico */
+    color: #EE8035; /* Nuevo color naranja */
   }
   
   .material-symbols-outlined {

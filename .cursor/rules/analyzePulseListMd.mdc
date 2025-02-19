@@ -1,0 +1,137 @@
+---
+description: analyzePulseListMd
+globs: 
+---
+ # Analyze Pulse List MD Rule
+
+Reglas para analizar y mantener actualizada la lista de pulses en pulsesList.md.
+
+<rule>
+name: analyze_pulse_list
+description: Estándares para analizar y documentar pulses en pulsesList.md
+filters:
+  - type: file_extension
+    pattern: "\.ts$"
+  - type: path
+    pattern: "src/lib/types/pulses/.*"
+
+actions:
+  - type: suggest
+    message: |
+      # Análisis y Documentación de Pulses
+
+      ## 1. Verificación del Archivo
+      Primero, verificar si existe pulsesList.md en la raíz:
+      ```typescript
+      if (!existsSync('pulsesList.md')) {
+        // Crear archivo con estructura base
+        createBasePulsesList();
+      }
+      ```
+
+      ## 2. Estructura Base
+      Si el archivo no existe, crear con:
+      ```markdown
+      # Lista de Pulses Disponibles
+
+      ## Pulses del Sistema
+
+      ## Categorías
+      ### Interacción de Usuario
+
+      ### Procesamiento de Datos
+
+      ### Sistema
+      ```
+
+      ## 3. Análisis del Pulse
+      Para cada pulse nuevo o modificado:
+
+      1. **Extraer Información**:
+      ```typescript
+      interface PulseInfo {
+        name: string;
+        description: string;
+        category: 'Interacción de Usuario' | 'Procesamiento de Datos' | 'Sistema';
+        handler: Function;
+      }
+
+      function analyzePulse(pulsePath: string): PulseInfo {
+        // Leer contenido del pulse
+        // Analizar su funcionalidad
+        // Determinar categoría
+        // Generar descripción concisa
+      }
+      ```
+
+      2. **Reglas de Descripción**:
+      - Máximo 20 palabras
+      - Iniciar con verbo en presente
+      - Ser específica y clara
+      - Evitar tecnicismos innecesarios
+
+      3. **Categorización**:
+      - **Interacción de Usuario**: Pulses que:
+        * Manejan eventos de UI
+        * Procesan input del usuario
+        * Actualizan la interfaz
+      
+      - **Procesamiento de Datos**: Pulses que:
+        * Transforman datos
+        * Realizan cálculos
+        * Filtran o validan información
+      
+      - **Sistema**: Pulses que:
+        * Configuran el sistema
+        * Manejan estado global
+        * Realizan operaciones core
+
+      ## 4. Actualización del Archivo
+      1. **Leer archivo actual**:
+      ```typescript
+      const currentContent = readFileSync('pulsesList.md', 'utf-8');
+      ```
+
+      2. **Encontrar sección correcta**:
+      ```typescript
+      function findCategory(content: string, category: string): number {
+        return content.indexOf(`### ${category}`);
+      }
+      ```
+
+      3. **Insertar o actualizar entrada**:
+      ```typescript
+      function updatePulseEntry(content: string, pulseInfo: PulseInfo): string {
+        const categoryIndex = findCategory(content, pulseInfo.category);
+        const pulseEntry = `- **${pulseInfo.name}**: ${pulseInfo.description}`;
+        // Insertar manteniendo orden alfabético
+      }
+      ```
+
+      ## 5. Formato de Entrada
+      Cada pulse debe documentarse así:
+      ```markdown
+      - **[NombrePulse]**: [Descripción concisa que inicia con verbo]
+      ```
+
+      Ejemplos:
+      ```markdown
+      - **UserAuthenticate**: Verifica credenciales del usuario y genera token de acceso
+      - **DataTransform**: Procesa y normaliza datos de entrada según reglas definidas
+      - **UIUpdate**: Actualiza componentes de interfaz basado en cambios de estado
+      ```
+
+      ## 6. Mantenimiento
+      - Mantener orden alfabético en cada categoría
+      - Eliminar entradas de pulses que ya no existen
+      - Actualizar descripciones cuando cambie la funcionalidad
+      - Verificar límite de palabras en descripciones
+
+metadata:
+  priority: high
+  version: 1.0
+  tags:
+    - documentation
+    - pulses
+    - analysis
+    - markdown

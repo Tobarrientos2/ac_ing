@@ -1,10 +1,9 @@
 <script>
   import { onMount } from 'svelte';
-  // import { fly } from 'svelte/transition';  // Comentado temporalmente
+  import { fly } from 'svelte/transition';
   import Logo from './Logo.svelte';
   import { activeTheme } from '../config/themes';
 
-  /* Comentado temporalmente
   let isMenuOpen = false;
 
   const toggleMenu = () => {
@@ -22,7 +21,6 @@
       document.body.classList.toggle('no-scroll', isMenuOpen);
     }
   }
-  */
 
   onMount(() => {
     const header = document.querySelector('header');
@@ -51,70 +49,86 @@
   });
 </script>
 
-<header class="fixed top-2 left-12 right-12 z-50">
-  <nav class="px-6 py-2 flex justify-center items-center relative">
-    <a href="/" class="z-50">
-      <div class="w-[100px] opacity-90 hover:opacity-100 transition-opacity duration-300"> 
-        <Logo />
-      </div>
+<header class="fixed top-4 right-4 z-50 md:top-8 md:right-8 w-fit">
+  <nav class="bg-black rounded-full px-5 py-2.5 flex items-center gap-6 relative z-[60]">
+    <!-- AC Logo text -->
+    <a href="/" class="text-white text-xl tracking-wide font-light" style="font-family: 'Calibri Light';">
+      AC
     </a>
-    <!-- Comentado temporalmente
-    <div class="ml-auto">
-      <button
-        class="z-50 w-12 h-12 flex flex-col justify-center items-center relative cursor-pointer"
-        on:click={toggleMenu}
-        aria-label="Toggle menu"
-      >
-        <div class="flex flex-col justify-center items-center w-12 h-12 relative">
-          <div class="flex flex-col justify-start items-center">
-            <span 
-              class="w-6 h-[2px] bg-zinc-900 transform -translate-x-[5px] transition-all duration-300"
-              style={isMenuOpen ? 'transform: translateX(-5px) rotate(45deg) translateY(6px)' : ''}
-            ></span>
-            <span 
-              class="w-6 h-[2px] bg-zinc-900 my-[6px] flex justify-center items-center relative transition-all duration-300"
-              class:opacity-0={isMenuOpen}
-            ></span>
-            <span 
-              class="w-6 h-[2px] bg-zinc-900 transform -translate-x-[5px] transition-all duration-300"
-              style={isMenuOpen ? 'transform: translateX(-5px) rotate(-45deg) translateY(-6px)' : ''}
-            ></span>
-          </div>
-        </div>
-      </button>
-    </div>
-    -->
+
+    <!-- Hamburger Menu -->
+    <button
+      class="w-8 h-8 flex flex-col justify-center items-center relative cursor-pointer"
+      on:click={toggleMenu}
+      aria-label="Toggle menu"
+    >
+      <div class="flex flex-col justify-center items-center w-8 h-8 relative">
+        <span 
+          class="w-6 h-[2px] bg-white absolute transform transition-all duration-300"
+          style={isMenuOpen ? 'transform: translateY(0) rotate(45deg)' : 'transform: translateY(-8px)'}
+        ></span>
+        <span 
+          class="w-6 h-[2px] bg-white absolute transition-all duration-300"
+          style={isMenuOpen ? 'opacity: 0' : ''}
+        ></span>
+        <span 
+          class="w-6 h-[2px] bg-white absolute transform transition-all duration-300"
+          style={isMenuOpen ? 'transform: translateY(0) rotate(-45deg)' : 'transform: translateY(8px)'}
+        ></span>
+      </div>
+    </button>
   </nav>
-  <!-- Comentado temporalmente
+
   {#if isMenuOpen}
     <div
-      class="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center"
-      style="height: 100vh; will-change: transform, opacity; background-color: {$activeTheme.colors.background};"
+      class="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black z-[55]"
+      style="height: 100vh;"
       transition:fly={{ y: -20, duration: 500 }}
     >
-      <ul class="flex flex-col items-center gap-12">
-        {#each menuItems as item}
-          <li>
-            <a
-              href={item.href}
-              class="text-4xl transition-colors duration-500 relative {$activeTheme.colors.text.primary} hover:{$activeTheme.colors.text.accent}
-                     after:content-[''] after:absolute after:-bottom-2 after:left-0 
-                     after:w-0 after:h-[2px] after:transition-all 
-                     after:duration-500 hover:after:w-full"
-              style="--accent-color: {$activeTheme.colors.primary}"
-              on:click={toggleMenu}
-            >
-              {item.title}
-            </a>
-          </li>
-        {/each}
+      <ul class="flex flex-col items-center -space-y-4">
+        <li><a href="/" class="menu-link">Inicio</a></li>
+        <li><a href="/servicios" class="menu-link">Servicios</a></li>
+        <li><a href="/portafolio" class="menu-link">Portafolio</a></li>
       </ul>
     </div>
   {/if}
-  -->
 </header>
 
 <style>
+  @font-face {
+    font-family: 'Calibri Light';
+    src: url('/fonts/calibri-light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+  }
+
+  .menu-link {
+    font-family: 'Calibri Light';
+    color: white;
+    font-size: 3rem;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .menu-link:hover {
+    opacity: 0.7;
+  }
+
+  /* Estilos para las líneas del menú hamburguesa */
+  button span {
+    border-radius: 1px;
+    top: 50%;
+    transform-origin: center;
+  }
+
+  button span:nth-child(1) {
+    transform: translateY(-6px);
+  }
+
+  button span:nth-child(3) {
+    transform: translateY(6px);
+  }
+
   header {
     background: transparent;
   }
@@ -128,12 +142,11 @@
 
   @media (max-width: 768px) {
     header {
-      left: 0;
-      right: 0;
+      right: 1rem;
     }
     nav {
-      padding-left: 0;
-      padding-right: 0;
+      padding-left: 1rem;
+      padding-right: 1rem;
     }
   }
 </style>
