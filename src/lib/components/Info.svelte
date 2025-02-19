@@ -1,7 +1,7 @@
 <script>
     import { Icon, Photo, H2, H3, User } from "svelte-hero-icons";
     import { onMount } from 'svelte';
-    import { Pulse as ClientPulse } from '$lib/clientPulses';
+    import { Pulse as ClientPulse } from '$lib/types/clientPulses';
     let showModal = false;
     let selectedImages = [];
     let selectedh1 = '';
@@ -14,73 +14,10 @@
     let profileImageInput;
     let hasFavicon = false;
 
-    let buildings = [
-        {
-            h1: "Edificio Santa Rita",
-            images: [
-                "./santarita.jpg",
-                "./santarita2.jpg",
-                "./santarita3.jpg",
-                "./santarita4.jpg",
-                "./santarita5.jpg",
-                "./santarita6.jpg",
-                "./santarita7.jpg",
-                "./santarita8.jpg"
-            ]
-        },
-        {
-            h1: "Edificio Alonso",
-            image: "https://ambientesdigital.com/wp-content/uploads/2023/06/R1A0137-.jpg"
-        },
-        {
-            h1: "Edificio Estoril 2",
-            image: "./estoril_II_nueva.png"
-        },
-        {
-            h1: "Edificio Estoril",
-            image: "./estoril_I.jpg"
-        },
-        {
-            h1: "Edificio Kaufman",
-            image: "https://www.kaufmann.cl/documents/68916/166093/head-nuestro-equipo.jpg/0c8e2e65-b191-5e8a-735b-7e6218fdb758?t=1597699010935"
-        }
-    ];
-
-    let systems = [
-        {
-            h1: "Edificio Sheraton, sistema proteccion de taludes",
-            image: "https://images2.mega.cl/meganoticias/2024/07/25/anteproyecto-sheraton-santiago_453841_2_66a29fd6e1f2d.jpg"
-        },
-        {
-            h1: "Edificio Bodenor",
-            images: [
-                "./bodenor1.jpg",
-                "./bodenor2.jpg",
-                "./bodenor3.jpg",
-                "./bodenor4.jpg",
-                "./bodenor5.jpg"
-            ]
-        },
-        {
-            h1: "Edificio Cine Hoyts La Reina",
-            image: "https://arc-anglerfish-arc2-prod-copesa.s3.amazonaws.com/public/IIJXQ7BEYNGMZNZPZ3PUK7FCUA.png"
-        }
-    ];
-
-    let manuals = [
-        {
-            h1: "Manual ICHA 2021",
-            image: "https://icha.cl/wp-content/uploads/2022/09/portada-diseno-estructuras-de-acero-1200px-1030x670.jpg"
-        },
-        {
-            h1: "Manual de Sistema Z Tubest",
-            image: "manual_z_tubest.webp"
-        },
-        {
-            h1: "Manual Diseño Estructural Cintact",
-            image: "manual_cintact.png"
-        }
-    ];
+    // Nuevas variables para los datos de edificios
+    let buildings = [];
+    let systems = [];
+    let manuals = [];
 
     function openModal(images, h1) {
         selectedImages = images;
@@ -90,10 +27,11 @@
 
     onMount(async () => {
         try {
-            const result = await ClientPulse.ImageList({});
-            if (result.success && result.data) {
-                allImages = result.data.images;
-                console.log('Archivos disponibles:', allImages); // Debug
+            // Obtener imágenes
+            const imageResult = await ClientPulse.ImageList({});
+            if (imageResult.success && imageResult.data) {
+                allImages = imageResult.data.images;
+                console.log('Archivos disponibles:', allImages);
 
                 // Buscar logo y favicon
                 const logoFile = allImages.find(img => img.startsWith('logo.'));
@@ -109,10 +47,20 @@
                     hasFavicon = true;
                 }
             } else {
-                console.error('Error al obtener imágenes:', result.error);
+                console.error('Error al obtener imágenes:', imageResult.error);
+            }
+
+            // Obtener datos de edificios
+            const buildingResult = await ClientPulse.BuildingList({});
+            if (buildingResult.success && buildingResult.data) {
+                buildings = buildingResult.data.buildings;
+                systems = buildingResult.data.systems;
+                manuals = buildingResult.data.manuals;
+            } else {
+                console.error('Error al obtener datos de edificios:', buildingResult.error);
             }
         } catch (error) {
-            console.error('Error fetching images:', error);
+            console.error('Error fetching data:', error);
         }
     });
 

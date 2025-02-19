@@ -1,52 +1,36 @@
-<script>
-  const buildings = [
-    // EDIFICIOS HABITACIONALES Y DE OFICINAS
-    {
-      title: 'Edificio Alonso',
-      description: 'Diseño estructural y supervisión de obra',
-      image: 'https://ambientesdigital.com/wp-content/uploads/2023/06/R1A0137-.jpg',
-      tag: 'News',
-      date: 'February 1, 2025'
-    },
-    {
-      title: 'Edificio Estoril 2',
-      description: 'Innovación en diseño sísmico',
-      image: './estoril_II_nueva.png',
-      tag: 'News',
-      date: 'November 22, 2024'
-    },
-    {
-      title: 'Edificio Estoril',
-      description: 'Proyecto residencial de alto estándar',
-      image: 'estoril_I.jpg',
-      tag: 'News',
-      date: 'November 15, 2024'
-    },
-    // EDIFICIOS INDUSTRIALES
-    {
-      title: 'Edificio Kaufman',
-      description: 'Diseño estructural y supervisión de obra',
-      image: 'https://www.kaufmann.cl/documents/68916/166093/head-nuestro-equipo.jpg/0c8e2e65-b191-5e8a-735b-7e6218fdb758?t=1597699010935',
-      tag: 'News',
-      date: 'February 1, 2025'
-    },
-    {
-      title: 'Edificio Cine Hoyts La Reina',
-      description: 'Innovación en diseño sísmico',
-      image: 'https://arc-anglerfish-arc2-prod-copesa.s3.amazonaws.com/public/IIJXQ7BEYNGMZNZPZ3PUK7FCUA.png',
-      tag: 'News',
-      date: 'November 22, 2024'
-    },
-     // EDIFICIOS ESPECIALES
-     // Add any "Edificios Especiales" here, following the same structure.
-  ];
+<script lang="ts">
+  import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';
+
+  let buildings = [];
+  
+  onMount(async () => {
+    try {
+      const res = await fetch('/src/lib/data/buildings.json');
+      const data = await res.json();
+      // Tomamos solo los edificios de la sección 'buildings'
+      buildings = data.buildings.map(building => ({
+        title: building.h1,
+        description: building.description || '',
+        image: building.images ? building.images[0] : building.image,
+        slug: building.slug,
+        tag: 'News',
+        date: building.date || new Date().toISOString()
+      }));
+    } catch (error) {
+      console.error('Error loading buildings:', error);
+      buildings = [];
+    }
+  });
 
   let visibleCards = 2.5;
   let currentIndex = 0;
-  let maxIndex = buildings.length - Math.floor(visibleCards);
+  let maxIndex = 0;
 
   let touchStartX = 0;
   let touchEndX = 0;
+
+  $: maxIndex = buildings.length - Math.floor(visibleCards);
 
   function next() {
     if (currentIndex < maxIndex) {
@@ -70,18 +54,21 @@
 
   function handleTouchEnd() {
     const swipeDistance = touchStartX - touchEndX;
-    const minSwipeDistance = 50; // mínima distancia para considerar un swipe
+    const minSwipeDistance = 50;
 
     if (Math.abs(swipeDistance) > minSwipeDistance) {
       if (swipeDistance > 0) {
-        next(); // Swipe izquierda
+        next();
       } else {
-        prev(); // Swipe derecha
+        prev();
       }
     }
   }
 
-  import { onMount } from 'svelte';
+  // Función para navegar al hacer clic en un card
+  function handleCardClick(slug: string) {
+    goto(`/${slug}`);
+  }
 
   onMount(() => {
     // Agregar el link de Material Symbols si no existe
@@ -118,14 +105,13 @@
     // Ajustar visibleCards según el tamaño de pantalla
     const updateVisibleCards = () => {
       if (window.innerWidth < 768) {
-        visibleCards = 1.02; // Casi full width en mobile
+        visibleCards = 1.02;
       } else {
-        visibleCards = 2.5; // Más cards visibles en PC
+        visibleCards = 2.5;
       }
       maxIndex = buildings.length - Math.floor(visibleCards);
     };
 
-    // Ejecutar al inicio y en resize
     updateVisibleCards();
     window.addEventListener('resize', updateVisibleCards);
 
@@ -184,7 +170,14 @@
         on:touchend={handleTouchEnd}
       >
         {#each buildings as item}
-          <div class="flex-shrink-0 w-[calc(98%-1rem)] md:w-[calc(38%-1rem)] relative group">
+          <div 
+            class="flex-shrink-0 w-[calc(98%-1rem)] md:w-[calc(38%-1rem)] relative group cursor-pointer"
+            on:click={() => handleCardClick(item.slug)}
+            on:keydown={(e) => e.key === 'Enter' && handleCardClick(item.slug)}
+            tabindex="0"
+            role="button"
+            aria-label={`Ver detalles de ${item.title}`}
+          >
             <img
               src={item.image || "/placeholder.svg"}
               alt={item.title}
@@ -192,7 +185,9 @@
             />
             <div class="mt-4 space-y-1">
               <h3 class="text-lg md:text-xl font-normal leading-tight">{item.title}</h3>
-              <p class="text-xs md:text-sm text-gray-600">{item.description}</p>
+              {#if item.description}
+                <p class="text-sm text-gray-600">{item.description}</p>
+              {/if}
             </div>
           </div>
         {/each}
@@ -216,6 +211,7 @@
   .group {
     cursor: none;
     position: relative;
+    transition: transform 0.3s ease;
   }
 
   :global(.custom-cursor) {
@@ -248,6 +244,10 @@
 
   img {
     transition: transform 0.6s ease-out;
+  }
+
+  .group:hover {
+    transform: translateY(-4px);
   }
 
   .group:hover img {

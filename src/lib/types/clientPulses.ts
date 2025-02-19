@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import { config } from './config/config';
+import { config } from '../config/config';
 
 type ApiMode = keyof typeof config.apiBaseUrl;
 

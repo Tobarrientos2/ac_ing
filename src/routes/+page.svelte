@@ -2,7 +2,6 @@
 	import '../styles.css';
     import FortyNineNorthTwo from '$lib/components/FortyNineNorthTwo.svelte';
     import Populous3 from '$lib/components/Populous3.svelte';
-    import Mine4 from '$lib/components/Mine4.svelte';
     import Mine5 from '$lib/components/Mine5.svelte';
     import FilmMapa from '$lib/components/FilmMapa.svelte';
     import AkerOne from '$lib/components/AkerOne.svelte';

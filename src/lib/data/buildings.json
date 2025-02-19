@@ -1,0 +1,78 @@
+{
+  "buildings": [
+    {
+      "h1": "Edificio Santa Rita",
+      "images": [
+        "./santarita.jpg",
+        "./santarita2.jpg",
+        "./santarita3.jpg",
+        "./santarita4.jpg",
+        "./santarita5.jpg",
+        "./santarita6.jpg",
+        "./santarita7.jpg",
+        "./santarita8.jpg"
+      ],
+      "slug": "edificio_santa_rita"
+    },
+    {
+      "h1": "Edificio Alonso",
+      "image": "https://ambientesdigital.com/wp-content/uploads/2023/06/R1A0137-.jpg",
+      "slug": "edificio_alonso"
+    },
+    {
+      "h1": "Edificio Estoril 2",
+      "image": "./estoril_II_nueva.png",
+      "slug": "edificio_estoril_2"
+    },
+    {
+      "h1": "Edificio Estoril",
+      "image": "./estoril_I.jpg",
+      "slug": "edificio_estoril"
+    },
+    {
+      "h1": "Edificio Kaufman",
+      "image": "https://www.kaufmann.cl/documents/68916/166093/head-nuestro-equipo.jpg/0c8e2e65-b191-5e8a-735b-7e6218fdb758?t=1597699010935",
+      "slug": "edificio_kaufman"
+    }
+  ],
+  "systems": [
+    {
+      "h1": "Edificio Sheraton, sistema proteccion de taludes",
+      "image": "https://images2.mega.cl/meganoticias/2024/07/25/anteproyecto-sheraton-santiago_453841_2_66a29fd6e1f2d.jpg",
+      "slug": "edificio_sheraton_sistema_proteccion_de_taludes"
+    },
+    {
+      "h1": "Edificio Bodenor",
+      "images": [
+        "./bodenor1.jpg",
+        "./bodenor2.jpg",
+        "./bodenor3.jpg",
+        "./bodenor4.jpg",
+        "./bodenor5.jpg"
+      ],
+      "slug": "edificio_bodenor"
+    },
+    {
+      "h1": "Edificio Cine Hoyts La Reina",
+      "image": "https://arc-anglerfish-arc2-prod-copesa.s3.amazonaws.com/public/IIJXQ7BEYNGMZNZPZ3PUK7FCUA.png",
+      "slug": "edificio_cine_hoyts_la_reina"
+    }
+  ],
+  "manuals": [
+    {
+      "h1": "Manual ICHA 2021",
+      "image": "https://icha.cl/wp-content/uploads/2022/09/portada-diseno-estructuras-de-acero-1200px-1030x670.jpg",
+      "slug": "manual_icha_2021"
+    },
+    {
+      "h1": "Manual de Sistema Z Tubest",
+      "image": "manual_z_tubest.webp",
+      "slug": "manual_de_sistema_z_tubest"
+    },
+    {
+      "h1": "Manual Diseño Estructural Cintact",
+      "image": "manual_cintact.png",
+      "slug": "manual_diseno_estructural_cintact"
+    }
+  ]
+} 
