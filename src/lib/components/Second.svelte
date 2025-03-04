@@ -78,7 +78,7 @@
         ]
       },
       "cine-hoyts-la-reina": {
-        h1: "Edificio Comercial",
+        h1: "Edificio Industrial",
         h2: "Cine Hoyts La Reina",
         h3: "Santiago, Chile",
         h4: "Cine Hoyts La Reina - Proyecto de ingeniería estructural",
