@@ -1,0 +1,22 @@
+{
+    "eventos": {
+        "tp1": "EVENTOS",
+        "tg1": "En 2006 organizamos la visita de Leslie E. Robertson, ingeniero estructural pionero con el diseño de 4 de los 10 edificios más altos del mundo, incluyendo las Torres Gemelas de Nueva York, el Shanghai World Financial Center, la Bank of China Tower en Hong Kong y las torres Puerta de Europa en Madrid.",
+        "tg2": "En 2018 realizamos el evento 'La Estructura del Diseño', haciendo alusión al libro de Robertson que narra su carrera como ingeniero estructural y su colaboración con grandes arquitectos.",
+        "tp2": "Visita de Leslie E. Robertson a Chile",
+        "tp3": " AC Proyectos y Asesorías | 2006",
+        "tp4": "Evento 'La Estructura del Diseño'",
+        "tp5": " AC Proyectos y Asesorías | 2018",
+        "tp6": "Evento 'La Estructura del Diseño' - Vista del público",
+        "tp7": " AC Proyectos y Asesorías | 2018",
+        "tp8": "Evento 'La Estructura del Diseño'",
+        "tp9": " AC Proyectos y Asesorías | 2018",
+        "third": true,
+        "media": [
+            "https://pymecheck.s3.us-east-1.amazonaws.com/webpages/ac-ing/EVENTO+2006+-+Alberto-Les-SawTeen-Victor+(1).JPG",
+            "https://pymecheck.s3.us-east-1.amazonaws.com/webpages/ac-ing/EVENTO+2018+-+DISEN%CC%83O+LA+ESTRUCTURA+DEL+DISEN%CC%83O+2018.png",
+            "https://pymecheck.s3.us-east-1.amazonaws.com/webpages/ac-ing/EVENTO+2006+-+SHERATON+AUDIENCIA.JPG",
+            "https://pymecheck.s3.us-east-1.amazonaws.com/webpages/ac-ing/2018+Alberto-Les-SawTeen-Patricio+(1).JPG"
+        ]
+    }
+} 

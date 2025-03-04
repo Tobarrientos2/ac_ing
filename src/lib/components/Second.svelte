@@ -78,7 +78,7 @@
         ]
       },
       "cine-hoyts-la-reina": {
-        h1: "Edificio Comercial",
+        h1: "Otros",
         h2: "Cine Hoyts La Reina",
         h3: "Santiago, Chile",
         h4: "Cine Hoyts La Reina - Proyecto de ingeniería estructural",
@@ -97,9 +97,9 @@
       },
       "sheraton": {
         h1: "Edificio Hotelero",
-        h2: "Sheraton",
+        h2: "Hotel Renaissance Santiago",
         h3: "Santiago, Chile",
-        h4: "Hotel Sheraton San Cristóbal - Proyecto de ingeniería estructural",
+        h4: "Hotel Renaissance Santiago - Proyecto de ingeniería estructural",
         media: [
           "https://pymecheck.s3.us-east-1.amazonaws.com/webpages/ac-ing/Sheraton-04-1-684x1030+(1).jpg"
         ]
@@ -115,9 +115,9 @@
       },
       "hotel-renaissance": {
         h1: "Edificio Hotelero",
-        h2: "Hotel Renaissance",
+        h2: "Hotel Renaissance Santiago",
         h3: "Santiago, Chile",
-        h4: "Hotel Renaissance - Proyecto de ingeniería estructural",
+        h4: "Hotel Renaissance Santiago - Proyecto de ingeniería estructural",
         media: [
           "https://pymecheck.s3.us-east-1.amazonaws.com/webpages/ac-ing/Hotel+y+Oficina+Renaissance+2.jpg"
         ]
@@ -132,7 +132,7 @@
         ]
       },
       "estadio-la-calera": {
-        h1: "Infraestructura Deportiva",
+        h1: "Otros",
         h2: "Estadio La Calera",
         h3: "La Calera, Chile",
         h4: "Estadio La Calera - Proyecto de ingeniería estructural",

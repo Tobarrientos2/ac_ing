@@ -2,9 +2,9 @@
     const footerData = {
         companyName: "AC INGENIERÍA",
         tagline: "Ingeniería Estructural de Excelencia",
-        logoUrl: "https://pymecheck.s3.us-east-1.amazonaws.com/webpages/ac-ing/logo_svg_plano.svg",
+        logoUrl: "https://pymecheck.s3.us-east-1.amazonaws.com/webpages/ac-ing/logo-completo.svg",
         contactInfo: {
-            email: "contacto@ac-ing.cl",
+            email: "claudia@ac-ing.cl",
             phone: "+569 9818 1332"
         },
         address: {
@@ -26,16 +26,8 @@
     <div class="max-w-none py-8 md:py-[50px] w-[calc(100%-32px)] md:w-[calc(100%-120px)] mx-4 md:mx-[60px] flex flex-col">
         <!-- Sección superior del footer -->
         <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-6 md:mb-[30px] border-b border-[#3a3a3a] pb-6">
-            <!-- Información de la empresa -->
-            <div class="mb-6 md:mb-0">
-                <!-- Logo de la empresa -->
-                <div class="mb-4">
-                    <img 
-                        src={footerData.logoUrl} 
-                        alt="Logo AC Ingeniería" 
-                        class="h-20 md:h-24"
-                    />
-                </div>
+            <!-- Información de contacto -->
+            <div class="mb-6 md:mb-0 md:w-1/4">
                 <div class="text-sm mb-2">
                     <a href="mailto:{footerData.contactInfo.email}" 
                        class="bg-gradient-to-b from-white to-white bg-no-repeat bg-[length:100%_1px] bg-bottom relative text-white hover:opacity-80">
@@ -49,9 +41,18 @@
                     </a>
                 </div>
             </div>
+
+            <!-- Logo de la empresa (centrado) -->
+            <div class="mb-6 md:mb-0 md:w-1/2 flex justify-center items-start">
+                <img 
+                    src={footerData.logoUrl} 
+                    alt="Logo AC Ingeniería" 
+                    class="h-32 md:h-40 w-auto"
+                />
+            </div>
             
             <!-- Información de dirección y mapa -->
-            <div class="md:w-1/2">
+            <div class="md:w-1/4">
                 <h3 class="text-lg font-medium mb-2 font-['Benton_Sans_Book',_sans-serif]">{footerData.address.title}</h3>
                 <address class="text-sm not-italic mb-4 text-gray-400 font-['Benton_Sans_Book',_sans-serif]">
                     {footerData.address.street}<br>

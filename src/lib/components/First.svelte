@@ -34,8 +34,14 @@
       "roberto-simpson": {
         tp1: "EDIFICIO ROBERTO SIMPSON",
         media: [
-          "https://pymecheck.s3.us-east-1.amazonaws.com/webpages/ac-ing/Roberto+Simpson.jpg"
-        ]
+          "https://pymecheck.s3.us-east-1.amazonaws.com/webpages/ac-ing/Roberto%2BSimpson+1+(4).png"
+        ],
+        position: "bottom",
+        metadata: {
+          location: "Santiago, Chile",
+          type: "Edificio Habitacional/Oficina",
+          description: "Proyecto de ingeniería estructural"
+        }
       }
     },
     "tg1": "Con un enfoque en la innovación, economía y seguridad estructural, nos destacamos en diseños eficientes y de alta calidad"
