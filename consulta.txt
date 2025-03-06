@@ -1,0 +1,37 @@
+Necesito ayuda configurando un túnel de Cloudflare para mi aplicación SvelteKit. Aquí están los detalles:
+
+1. Estado actual:
+- Tengo una aplicación SvelteKit corriendo localmente en http://localhost:5173
+- Tengo un túnel de Cloudflare configurado (ID: 86776e42-eba3-4d30-9e36-6152f31513c7)
+- El túnel se llama "whatsapp-dev"
+- Intento acceder a través de https://webhook.pymecheck.cl
+
+2. Configuración actual:
+```yaml
+# .cloudflared/config.yml
+tunnel: 86776e42-eba3-4d30-9e36-6152f31513c7
+credentials-file: /Users/tomas/.cloudflared/86776e42-eba3-4d30-9e36-6152f31513c7.json
+ingress:
+  - hostname: webhook.pymecheck.cl
+    service: http://localhost:5173
+  - service: http_status:404
+```
+
+3. Comandos que he ejecutado:
+- `cloudflared tunnel route dns whatsapp-dev webhook.pymecheck.cl`
+- `npm run dev -- --host` (para exponer el servidor de desarrollo)
+- `cloudflared tunnel run whatsapp-dev`
+
+4. Problema:
+- Al acceder a https://webhook.pymecheck.cl recibo un error 404
+- El subdominio webhook.pymecheck.cl ha funcionado anteriormente con otros proyectos
+- El túnel parece estar conectado correctamente según los logs
+- El servidor de desarrollo de SvelteKit está corriendo y accesible localmente
+
+5. Información adicional:
+- Sistema operativo: macOS
+- Versión de cloudflared: 2025.2.1
+- El dominio principal es pymecheck.cl y está gestionado en Cloudflare
+- El túnel muestra conexiones activas a scl02 y scl03 (servidores de Cloudflare en Santiago)
+
+¿Podrías ayudarme a identificar por qué no está funcionando el túnel y cómo puedo solucionarlo?

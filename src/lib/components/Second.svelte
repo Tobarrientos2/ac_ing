@@ -97,9 +97,9 @@
       },
       "sheraton": {
         h1: "Edificio Hotelero",
-        h2: "Hotel Renaissance Santiago",
+        h2: "Hotel Sheraton Santiago",
         h3: "Santiago, Chile",
-        h4: "Hotel Renaissance Santiago - Proyecto de ingeniería estructural",
+        h4: "Hotel Sheraton Santiago - Proyecto de ingeniería estructural",
         media: [
           "https://pymecheck.s3.us-east-1.amazonaws.com/webpages/ac-ing/Sheraton-04-1-684x1030+(1).jpg"
         ]
@@ -141,7 +141,7 @@
         ]
       },
       "roberto-simpson": {
-        h1: "Edificio Habitacional/Oficina",
+        h1: "Edificio Industrial",
         h2: "Roberto Simpson",
         h3: "Santiago, Chile",
         h4: "Roberto Simpson - Proyecto de ingeniería estructural",
@@ -158,58 +158,18 @@
     ...proyecto
   }));
 
-  // Inicialmente mostrar solo los primeros 4 proyectos en desktop, todos en móvil
+  // Organizar proyectos por categoría
+  const categorias = {
+    "Habitacional": allProyectos.filter(p => p.h1.includes("Habitacional")),
+    "Industrial": allProyectos.filter(p => p.h1.includes("Industrial")),
+    "Otros": allProyectos.filter(p => !p.h1.includes("Habitacional") && !p.h1.includes("Industrial"))
+  };
+
+  // Inicialmente mostrar todos los proyectos organizados por categoría
   let displayedProjects = allProyectos;
   let isLoading = false;
-  let allProjectsLoaded = false;
+  let allProjectsLoaded = true; // Ya no necesitamos carga infinita
   
-  // Función para cargar más proyectos (solo para desktop)
-  function loadMoreProjects() {
-    if (isLoading || allProjectsLoaded || window.innerWidth < 768) return;
-    
-    isLoading = true;
-    
-    // Simular una carga con un pequeño retraso
-    setTimeout(() => {
-      const currentLength = displayedProjects.length;
-      const nextBatch = allProyectos.slice(currentLength, currentLength + 4);
-      
-      if (nextBatch.length > 0) {
-        displayedProjects = [...displayedProjects, ...nextBatch];
-      }
-      
-      allProjectsLoaded = displayedProjects.length >= allProyectos.length;
-      isLoading = false;
-    }, 800);
-  }
-  
-  // Configurar el observador de intersección para carga infinita
-  let loadMoreTrigger;
-  let observer;
-  
-  onMount(() => {
-    if (typeof IntersectionObserver !== 'undefined') {
-      observer = new IntersectionObserver((entries) => {
-        const [entry] = entries;
-        if (entry.isIntersecting && !isLoading && !allProjectsLoaded) {
-          loadMoreProjects();
-        }
-      }, {
-        rootMargin: '200px'
-      });
-      
-      if (loadMoreTrigger) {
-        observer.observe(loadMoreTrigger);
-      }
-    }
-    
-    return () => {
-      if (observer && loadMoreTrigger) {
-        observer.unobserve(loadMoreTrigger);
-      }
-    };
-  });
-
   // Estado para controlar el carrusel en móvil
   let currentIndex = 0;
   let totalSlides = displayedProjects.length;
@@ -309,198 +269,180 @@
 
 <section id="proyectos" data-theme="black" class="py-8 md:py-[63px] box-border block font-['Lato'] antialiased relative z-10">
   <div class="mx-4 sm:mx-6 md:mx-[60px] box-border">
-    <!-- Título de la sección -->
-    
-    <!-- Vista de escritorio - Grid -->
-    <div class="hidden md:grid gap-x-[30px] gap-y-[50px] grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mr-0 w-full relative transition-[0.3s_ease-out] box-border">
-      {#each displayedProjects as item, index}
-        <article 
-          in:fly={{ y: 50, duration: animationDuration, delay: getAnimationDelay(index) }}
-          data-theme="black" 
-          data-card-title={item.h2}
-          data-card-type={item.h1.toLowerCase()} 
-          class="relative box-border block {index > 0 && index % 4 !== 0 ? 'border-l border-gray-700' : ''} pl-[15px] first:pl-0"
-          on:click|preventDefault|stopPropagation={() => {}}
-        >
-          <!-- Imagen del proyecto -->
-          <div class="mb-6 box-border" on:click|preventDefault|stopPropagation={() => {}}>
-            <a 
-              href="/proyectos/{item.slug}" 
-              aria-label="Proyecto image link to {item.h2}" 
-              data-orientation="landscape" 
-              class="relative h-[180px] sm:h-[200px] md:h-[230.625px] block overflow-hidden box-border bg-transparent no-underline"
-              on:click|preventDefault|stopPropagation={() => {}}
-            >
-              <picture class="inset-0 m-auto overflow-hidden absolute block h-full w-full box-border" on:click|preventDefault|stopPropagation={() => {}}>
-                {#if item.media[0].endsWith('.mp4')}
-                  <video 
-                    src={item.media[0]}
-                    title={item.h4}
-                    class="h-full object-cover w-full block transition-transform duration-1000 transform-origin-center box-border border-0"
-                    autoplay 
-                    muted 
-                    loop 
-                    playsinline 
-                    preload="auto"
-                    on:click|preventDefault|stopPropagation={() => {}}
-                  ></video>
-                {:else}
-                  <source media="(max-width: 767px)" srcset={item.media[0]}>
-                  <source media="(min-width: 768px) and (max-width: 1279px)" srcset={item.media[1] || item.media[0]}>
-                  <source media="(min-width: 1280px)" srcset={item.media[2] || item.media[0]}>
-                  <img 
-                    src={item.media[0]} 
-                    alt={item.h4} 
-                    class="h-full object-cover w-full block transition-transform duration-1000 transform-origin-center box-border border-0 {item.position === 'left' ? 'object-left' : ''}"
-                    on:click|preventDefault|stopPropagation={() => {}}
-                  >
-                {/if}
-              </picture>
-            </a>
-          </div>
-          
-          <!-- Contenido del proyecto -->
-          <div class="relative box-border" on:click|preventDefault|stopPropagation={() => {}}>
-            <span class="text-white block font-bold text-sm leading-[17px] mb-3 capitalize box-border" on:click|preventDefault|stopPropagation={() => {}}>
-              {item.h1}
-            </span>
-            <h3 class="text-lg leading-[22px] text-white font-normal mb-2 box-border" on:click|preventDefault|stopPropagation={() => {}}>
-              <a 
-                href="/proyectos/{item.slug}" 
-                title={item.h2} 
-                class="text-white box-border bg-transparent no-underline hover:underline"
-                on:click|preventDefault|stopPropagation={() => {}}
+    <!-- Vista de escritorio - Categorías -->
+    <div class="hidden md:block">
+      {#each Object.entries(categorias) as [categoria, proyectos]}
+        <div class="mb-16">
+          <h2 class="text-white text-2xl font-bold mb-8">{categoria}</h2>
+          <div class="grid gap-x-[30px] gap-y-[50px] grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mr-0 w-full relative transition-[0.3s_ease-out] box-border">
+            {#each proyectos as item, index}
+              <article 
+                in:fly={{ y: 50, duration: animationDuration, delay: getAnimationDelay(index) }}
+                data-theme="black" 
+                data-card-title={item.h2}
+                data-card-type={item.h1.toLowerCase()} 
+                class="relative box-border block {index > 0 && index % 4 !== 0 ? 'border-l border-gray-700' : ''} pl-[15px] first:pl-0"
               >
-                {item.h2}
-              </a>
-            </h3>
-            <p class="flex text-gray-500 text-sm font-normal leading-[17px] m-0 box-border" on:click|preventDefault|stopPropagation={() => {}}>
-              <span class="box-border" on:click|preventDefault|stopPropagation={() => {}}>
-                {item.h3}
-              </span>
-            </p>
+                <!-- Imagen del proyecto -->
+                <div class="mb-6 box-border">
+                  <a 
+                    href="/proyectos/{item.slug}" 
+                    aria-label="Proyecto image link to {item.h2}" 
+                    data-orientation="landscape" 
+                    class="relative h-[180px] sm:h-[200px] md:h-[230.625px] block overflow-hidden box-border bg-transparent no-underline"
+                  >
+                    <picture class="inset-0 m-auto overflow-hidden absolute block h-full w-full box-border">
+                      {#if item.media[0].endsWith('.mp4')}
+                        <video 
+                          src={item.media[0]}
+                          title={item.h4}
+                          class="h-full object-cover w-full block transition-transform duration-1000 transform-origin-center box-border border-0"
+                          autoplay 
+                          muted 
+                          loop 
+                          playsinline 
+                          preload="auto"
+                        ></video>
+                      {:else}
+                        <source media="(max-width: 767px)" srcset={item.media[0]}>
+                        <source media="(min-width: 768px) and (max-width: 1279px)" srcset={item.media[1] || item.media[0]}>
+                        <source media="(min-width: 1280px)" srcset={item.media[2] || item.media[0]}>
+                        <img 
+                          src={item.media[0]} 
+                          alt={item.h4} 
+                          class="h-full object-cover w-full block transition-transform duration-1000 transform-origin-center box-border border-0"
+                        >
+                      {/if}
+                    </picture>
+                  </a>
+                </div>
+                
+                <!-- Contenido del proyecto -->
+                <div class="relative box-border">
+                  <span class="text-white block font-bold text-sm leading-[17px] mb-3 capitalize box-border">
+                    {item.h1}
+                  </span>
+                  <h3 class="text-lg leading-[22px] text-white font-normal mb-2 box-border">
+                    <a 
+                      href="/proyectos/{item.slug}" 
+                      title={item.h2} 
+                      class="text-white box-border bg-transparent no-underline hover:underline"
+                    >
+                      {item.h2}
+                    </a>
+                  </h3>
+                  <p class="flex text-gray-500 text-sm font-normal leading-[17px] m-0 box-border">
+                    <span class="box-border">
+                      {item.h3}
+                    </span>
+                  </p>
+                </div>
+              </article>
+            {/each}
           </div>
-        </article>
+        </div>
       {/each}
     </div>
     
-    <!-- Vista móvil - Carrusel con soporte para swipe -->
-    <div 
-      class="md:hidden w-full relative overflow-hidden touch-pan-y"
-      bind:this={carouselElement}
-      on:touchstart={handleTouchStart}
-      on:touchmove={handleTouchMove}
-      on:touchend={handleTouchEnd}
-      on:touchcancel={handleTouchEnd}
-      on:click|preventDefault|stopPropagation={() => {}}
-    >
-      <div 
-        class="flex transition-transform duration-300 ease-out" 
-        style="transform: {transformValue}; {isDragging ? 'transition: none;' : ''}"
-        on:click|preventDefault|stopPropagation={() => {}}
-      >
-        {#each displayedProjects as item, index}
-          <article 
-            in:fly={{ y: 50, duration: animationDuration, delay: getAnimationDelay(index) }}
-            data-theme="black" 
-            data-card-title={item.h2}
-            data-card-type={item.h1.toLowerCase()} 
-            class="w-full flex-shrink-0 relative box-border block"
-            on:click|preventDefault|stopPropagation={() => {}}
+    <!-- Vista móvil - Categorías con carrusel -->
+    <div class="md:hidden">
+      {#each Object.entries(categorias) as [categoria, proyectos]}
+        <div class="mb-12">
+          <h2 class="text-white text-xl font-bold mb-6">{categoria}</h2>
+          <div 
+            class="w-full relative overflow-hidden touch-pan-y"
+            bind:this={carouselElement}
+            on:touchstart={handleTouchStart}
+            on:touchmove={handleTouchMove}
+            on:touchend={handleTouchEnd}
+            on:touchcancel={handleTouchEnd}
           >
-            <!-- Contenido del artículo -->
-            <div class="mb-6 box-border">
-              <a 
-                href="/proyectos/{item.slug}" 
-                aria-label="Proyecto image link to {item.h2}" 
-                data-orientation="landscape" 
-                class="relative h-[200px] block overflow-hidden box-border bg-transparent no-underline"
-              >
-                <picture class="inset-0 m-auto overflow-hidden absolute block h-full w-full box-border">
-                  {#if item.media[0].endsWith('.mp4')}
-                    <video 
-                      src={item.media[0]}
-                      title={item.h4}
-                      class="h-full object-cover w-full block transition-transform duration-1000 transform-origin-center box-border border-0"
-                      autoplay 
-                      muted 
-                      loop 
-                      playsinline 
-                      preload="auto"
-                    ></video>
-                  {:else}
-                    <source media="(max-width: 767px)" srcset={item.media[0]}>
-                    <img 
-                      src={item.media[0]} 
-                      alt={item.h4} 
-                      class="h-full object-cover w-full block transition-transform duration-1000 transform-origin-center box-border border-0 {item.position === 'left' ? 'object-left' : ''}"
+            <div 
+              class="flex transition-transform duration-300 ease-out" 
+              style="transform: {transformValue}; {isDragging ? 'transition: none;' : ''}"
+            >
+              {#each proyectos as item, index}
+                <article 
+                  in:fly={{ y: 50, duration: animationDuration, delay: getAnimationDelay(index) }}
+                  data-theme="black" 
+                  data-card-title={item.h2}
+                  data-card-type={item.h1.toLowerCase()} 
+                  class="w-full flex-shrink-0 relative box-border block"
+                >
+                  <!-- Contenido del artículo -->
+                  <div class="mb-6 box-border">
+                    <a 
+                      href="/proyectos/{item.slug}" 
+                      aria-label="Proyecto image link to {item.h2}" 
+                      data-orientation="landscape" 
+                      class="relative h-[200px] block overflow-hidden box-border bg-transparent no-underline"
                     >
-                  {/if}
-                </picture>
-              </a>
+                      <picture class="inset-0 m-auto overflow-hidden absolute block h-full w-full box-border">
+                        {#if item.media[0].endsWith('.mp4')}
+                          <video 
+                            src={item.media[0]}
+                            title={item.h4}
+                            class="h-full object-cover w-full block transition-transform duration-1000 transform-origin-center box-border border-0"
+                            autoplay 
+                            muted 
+                            loop 
+                            playsinline 
+                            preload="auto"
+                          ></video>
+                        {:else}
+                          <source media="(max-width: 767px)" srcset={item.media[0]}>
+                          <img 
+                            src={item.media[0]} 
+                            alt={item.h4} 
+                            class="h-full object-cover w-full block transition-transform duration-1000 transform-origin-center box-border border-0"
+                          >
+                        {/if}
+                      </picture>
+                    </a>
+                  </div>
+                  
+                  <!-- Contenido del proyecto -->
+                  <div class="relative box-border">
+                    <span class="text-white block font-bold text-sm leading-[17px] mb-3 capitalize box-border">
+                      {item.h1}
+                    </span>
+                    <h3 class="text-lg leading-[22px] text-white font-normal mb-2 box-border">
+                      <a 
+                        href="/proyectos/{item.slug}" 
+                        title={item.h2} 
+                        class="text-white box-border bg-transparent no-underline hover:underline"
+                      >
+                        {item.h2}
+                      </a>
+                    </h3>
+                    <p class="flex text-gray-500 text-sm font-normal leading-[17px] m-0 box-border">
+                      <span class="box-border">
+                        {item.h3}
+                      </span>
+                    </p>
+                  </div>
+                </article>
+              {/each}
             </div>
             
-            <!-- Contenido del proyecto -->
-            <div class="relative box-border">
-              <span class="text-white block font-bold text-sm leading-[17px] mb-3 capitalize box-border">
-                {item.h1}
-              </span>
-              <h3 class="text-lg leading-[22px] text-white font-normal mb-2 box-border">
-                <a 
-                  href="/proyectos/{item.slug}" 
-                  title={item.h2} 
-                  class="text-white box-border bg-transparent no-underline hover:underline"
-                >
-                  {item.h2}
-                </a>
-              </h3>
-              <p class="flex text-gray-500 text-sm font-normal leading-[17px] m-0 box-border">
-                <span class="box-border">
-                  {item.h3}
-                </span>
-              </p>
+            <!-- Indicador de posición actual/total -->
+            <div class="absolute bottom-3 right-3 bg-black/50 px-3 py-1 rounded-full text-white text-sm">
+              {currentIndex + 1}/{proyectos.length}
             </div>
-          </article>
-        {/each}
-      </div>
-      
-      <!-- Indicador de posición actual/total -->
-      <div class="absolute bottom-3 right-3 bg-black/50 px-3 py-1 rounded-full text-white text-sm">
-        {currentIndex + 1}/{displayedProjects.length}
-      </div>
-      
-      <!-- Indicadores de paginación -->
-      <div class="flex justify-center mt-6 mb-4">
-        {#each Array(totalSlides) as _, i}
-          <button 
-            class="w-3 h-3 mx-2 rounded-full {i === currentIndex ? 'bg-white' : 'bg-white/30'} transition-all duration-300"
-            on:click={() => currentIndex = i}
-            aria-label="Go to slide {i + 1}"
-          ></button>
-        {/each}
-      </div>
+            
+            <!-- Indicadores de paginación -->
+            <div class="flex justify-center mt-6 mb-4">
+              {#each Array(proyectos.length) as _, i}
+                <button 
+                  class="w-3 h-3 mx-2 rounded-full {i === currentIndex ? 'bg-white' : 'bg-white/30'} transition-all duration-300"
+                  on:click={() => currentIndex = i}
+                  aria-label="Go to slide {i + 1}"
+                ></button>
+              {/each}
+            </div>
+          </div>
+        </div>
+      {/each}
     </div>
-    
-    <!-- Botón "Cargar más proyectos" o indicador de carga (solo visible en desktop) -->
-    <div class="hidden md:block text-center mt-10">
-      {#if !allProjectsLoaded}
-        <button 
-          on:click={loadMoreProjects}
-          class="inline-block px-8 py-3 border border-white text-white hover:bg-white hover:text-black transition-colors {isLoading ? 'opacity-70 cursor-wait' : ''}"
-          disabled={isLoading}
-        >
-          {isLoading ? 'Cargando...' : 'Cargar más proyectos'}
-        </button>
-      {:else}
-        <p class="text-white opacity-70">Has visto todos los proyectos disponibles</p>
-      {/if}
-    </div>
-    
-    <!-- Elemento invisible para detectar cuando el usuario llega al final y cargar más (solo desktop) -->
-    <div 
-      bind:this={loadMoreTrigger} 
-      class="hidden md:block h-10 w-full mt-10 opacity-0"
-      aria-hidden="true"
-    ></div>
   </div>
 </section>

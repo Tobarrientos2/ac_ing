@@ -1,0 +1,6 @@
+tunnel: 86776e42-eba3-4d30-9e36-6152f31513c7
+credentials-file: /Users/tomas/.cloudflared/86776e42-eba3-4d30-9e36-6152f31513c7.json
+ingress:
+  - hostname: webhook.pymecheck.cl
+    service: http://localhost:5173
+  - service: http_status:404
